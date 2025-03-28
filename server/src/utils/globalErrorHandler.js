@@ -112,7 +112,7 @@ const handlePrismaError = (error) => {
 };
 
 
-const globalErrorHandler = (error, req, res, next) => {
+const globalErrorHandler = (error, req, res, _next) => {
 
     error.statusCode = error.statusCode || 500;
     error.status = error.status || 'error';

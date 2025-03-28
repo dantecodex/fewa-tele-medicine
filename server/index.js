@@ -11,8 +11,10 @@ import globalErrorHandler from "./src/utils/globalErrorHandler.js";
 import requestId from "./src/middleware/requestId.js";
 import rateLimiter from "./src/utils/rateLimiter.js";
 
-
-const requiredEnvVars = ['NODE_ENV', 'CORS_ORIGINS'];
+const requiredEnvVars = ['NODE_ENV', 'CORS_ORIGINS', 'DATABASE_URL',
+    'JWT_ISSUER', 'JWT_SECRET', 'EMAIL_HOST',
+    'EMAIL_PORT', 'EMAIL_USER', 'EMAIL_PASS',
+    'EMAIL_FROM'];
 if (process.env.NODE_ENV === 'production') {
     requiredEnvVars.forEach(varName => {
         if (!process.env[varName]) {

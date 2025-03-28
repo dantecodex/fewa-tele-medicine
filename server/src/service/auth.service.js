@@ -30,7 +30,9 @@ const signup = async (validatedData) => {
         data: {
             ...validatedData,
             password: hashedPassword,
-            password_changed_at: new Date()
+            password_changed_at: new Date(),
+            otp: Math.floor(100000 + Math.random() * 900000),
+            otp_expires_at: new Date(Date.now() + 10 * 60 * 1000)
         },
         select: { id: true, email: true, username: true, created_at: true }
     });

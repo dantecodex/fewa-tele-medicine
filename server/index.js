@@ -3,6 +3,7 @@ import cors from "cors";
 import helmet from "helmet";
 import compression from "compression";
 import httpErrors from "http-errors";
+import "dotenv/config"
 
 import logger from "./src/utils/logger.js";
 import apiRouter from "./src/api/mainRouter.js";

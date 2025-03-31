@@ -12,7 +12,12 @@ const login = new ValidationHelper({
   identifier: joi.string().min(3).required(),
   password: joi.string().min(6).required(),
 })
+
+const verifyEmail = new ValidationHelper({
+  otp: joi.string().length(6).required()
+})
 export default {
   signup,
   login,
+  verifyEmail
 }

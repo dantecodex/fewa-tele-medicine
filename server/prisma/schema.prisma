@@ -22,6 +22,6 @@ model User {
   deleted_at          DateTime?
   last_login          DateTime?
   is_active           Boolean   @default(true)
-  is_verfied          Boolean   @default(false)
+  is_verified         Boolean   @default(false)
   password_changed_at DateTime  @default(now())
 }

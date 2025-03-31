@@ -98,7 +98,7 @@ const handleSubmitData= async (data)=>{
       }
     } else if (currentSection === "verifyOtpSection") {
       try {
-        const response = await fetch(`${API_BASE_URL}/verify-otp`, {
+        const response = await fetch(`${API_BASE_URL}/auth/verify-email`, {
           method: "POST",
           headers: { 
             "Content-Type": "application/json",

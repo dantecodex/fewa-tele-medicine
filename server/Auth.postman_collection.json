@@ -1,105 +1,105 @@
 {
-	"info": {
-		"_postman_id": "7578eccf-3fef-4b00-9c9d-6c6cc6e11d07",
-		"name": "Auth",
-		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
-		"_exporter_id": "34579844"
-	},
-	"item": [
-		{
-			"name": "Signup",
-			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"first\": \"saurbh\",\n    \"last\": \"jain\",\n    \"email\": \"saurbh@gmail.com\",\n    \"phone\": \"9876543210\",\n    \"username\": \"saurbh\",\n    \"password\": \"password\"\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": "localhost:2000/api/v1/auth/signup"
-			},
-			"response": []
-		},
-		{
-			"name": "Login",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"var jsonData = pm.response.json();",
-							"",
-							"if (pm.response.code === 200 && jsonData.data && jsonData.data.accessToken) {",
-							"    pm.globals.set(\"accessToken\", jsonData.data.accessToken);",
-							"    console.log(\"Access Token Saved:\", jsonData.data.accessToken);",
-							"} else {",
-							"    pm.globals.unset(\"accessToken\");",
-							"}",
-							""
-						],
-						"type": "text/javascript",
-						"packages": {}
-					}
-				}
-			],
-			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"identifier\": \"saurbh\",\n    \"password\": \"password\"\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": "localhost:2000/api/v1/auth/login"
-			},
-			"response": []
-		},
-		{
-			"name": "profile data",
-			"request": {
-				"auth": {
-					"type": "bearer",
-					"bearer": {
-						"token": "{{accessToken}}"
-					}
-				},
-				"method": "GET",
-				"header": [],
-				"url": "localhost:2000/api/v1/user/profile"
-			},
-			"response": []
-		},
-		{
-			"name": "update profile",
-			"request": {
-				"auth": {
-					"type": "bearer",
-					"bearer": {
-						"token": "{{accessToken}}"
-					}
-				},
-				"method": "PUT",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"first\": \"saurv\",\n    \"last\": \"jains\",\n    \"email\": \"saurbh1@gmail.com\",\n    // \"phone\": \"7049850868\",\n    // \"username\": \"dantecodex\",\n    \"password\": \"password1\"\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": "localhost:2000/api/v1/user/profile"
-			},
-			"response": []
-		}
-	]
+  "info": {
+    "_postman_id": "7578eccf-3fef-4b00-9c9d-6c6cc6e11d07",
+    "name": "Auth",
+    "schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+    "_exporter_id": "34579844"
+  },
+  "item": [
+    {
+      "name": "Signup",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"first\": \"saurbh\",\n    \"last\": \"jain\",\n    \"email\": \"saurbh@gmail.com\",\n    \"phone\": \"9876543210\",\n    \"username\": \"saurbh\",\n    \"password\": \"password\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": "localhost:2000/api/v1/auth/signup"
+      },
+      "response": []
+    },
+    {
+      "name": "Login",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "var jsonData = pm.response.json();",
+              "",
+              "if (pm.response.code === 200 && jsonData.data && jsonData.data.accessToken) {",
+              "    pm.globals.set(\"accessToken\", jsonData.data.accessToken);",
+              "    console.log(\"Access Token Saved:\", jsonData.data.accessToken);",
+              "} else {",
+              "    pm.globals.unset(\"accessToken\");",
+              "}",
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"identifier\": \"saurbh\",\n    \"password\": \"password\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": "localhost:2000/api/v1/auth/login"
+      },
+      "response": []
+    },
+    {
+      "name": "profile data",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": {
+            "token": "{{accessToken}}"
+          }
+        },
+        "method": "GET",
+        "header": [],
+        "url": "localhost:2000/api/v1/user/profile"
+      },
+      "response": []
+    },
+    {
+      "name": "update profile",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": {
+            "token": "{{accessToken}}"
+          }
+        },
+        "method": "PUT",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"first\": \"saurv\",\n    \"last\": \"jains\",\n    \"email\": \"saurbh1@gmail.com\",\n    // \"phone\": \"7049850868\",\n    // \"username\": \"dantecodex\",\n    \"password\": \"password1\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": "localhost:2000/api/v1/user/profile"
+      },
+      "response": []
+    }
+  ]
 }

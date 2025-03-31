@@ -74,7 +74,7 @@ const handlePrismaError = (error) => {
   }
 
   if (error instanceof Prisma.PrismaClientRustPanicError) {
-    logger.fatal("Prisma engine crashed:", error)
+    logger.error("Prisma engine crashed:", error)
     return new CustomError("Database system error", 500, { code: "DB_ENGINE_FAILURE" })
   }
 
@@ -129,12 +129,12 @@ const globalErrorHandler = (error, req, res, _next) => {
 }
 
 process.on("uncaughtException", (error) => {
-  logger.fatal("Uncaught Exception:", error)
+  logger.error("Uncaught Exception:", error)
   process.exit(1)
 })
 
 process.on("unhandledRejection", (reason) => {
-  logger.fatal("Unhandled Rejection:", reason)
+  logger.error("Unhandled Rejection:", reason)
   process.exit(1)
 })
 

@@ -15,10 +15,17 @@ import { navigate } from "wouter/use-browser-location";
 // import Link from "wouter";
 
 const Login = () => {
-  const [form, setForm] = useState({
+  type FormState = {
+    providerUserName: string;
+    providerPassword: string;
+  };
+
+  const [form, setForm] = useState<FormState>({
     providerUserName: "",
     providerPassword: "",
   });
+
+  const API_BASE_URL = "http://localhost:2000/api/v1";
 
   const [errors, setErrors] = useState({});
   //   const navigate = useNavigate();
@@ -35,15 +42,45 @@ const Login = () => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (validate()) {
-      console.log("Logging in with:", form);
-      localStorage.setItem("userName", JSON.stringify(form.providerUserName))
-      navigate("/provider/dashboard");
-      // Implement login logic here
+  // const handleSubmit = (e) => {
+  //   e.preventDefault();
+  //   if (validate()) {
+  //     console.log("Logging in with:", form);
+  //     localStorage.setItem("userName", JSON.stringify(form.providerUserName))
+  //     navigate("/provider/dashboard");
+  //     // Implement login logic here
+  //   }
+  // };
+
+
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  if (validate()) {
+    try {
+      const response = await fetch(`${API_BASE_URL}/auth/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          identifier: form.providerUserName,
+          password: form.providerPassword,
+        }),
+      });
+
+      const result = await response.json();
+      if (result.success) {
+        console.log("result", result);
+        localStorage.setItem("accessToken", result?.data?.accessToken);
+        localStorage.setItem("userName", JSON.stringify(form.providerUserName));
+        navigate("/provider/dashboard");
+      } else {
+        setErrors({ apiError: result.message || "Login failed. Please try again." });
+      }
+    } catch (error) {
+      setErrors({ apiError: "An error occurred. Please try again later." });
     }
-  };
+  }
+};
+
 
   return (
     <Container maxWidth="lg" >

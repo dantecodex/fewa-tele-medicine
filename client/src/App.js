@@ -13,7 +13,7 @@ import Chat from "../src/provider/chat/Chat.tsx";
 import VideoConference from "../src/provider/videoConference/VideoConference.tsx";
 // import Report from "../src/provider/report/Report.tsx";
 import Report from "./provider/reports/Report.tsx";
-import { BrowserRouter,Navigate } from 'react-router-dom';
+import { BrowserRouter, Navigate } from 'react-router-dom';
 // import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import MeetingHistory from "./provider/meetingHistory/MeetingHistory.tsx";
 import UserSettings from "./provider/userSettings/UserSettings.tsx";
@@ -27,9 +27,9 @@ import Summary from "./patient/summary/Summary.tsx";
 // Create a client
 const queryClient = new QueryClient();
 
-const IsAuthentication = ({ children }) => {
-  const isAuthenticated = true; // Replace with real authentication check
-  return isAuthenticated ? children : <Navigate to="/login" />;
+const IsAuthenticated = ({ children }) => {
+  const isAuthenticated = localStorage.getItem("accessToken"); // Check if token exists
+  return isAuthenticated ? children : <Navigate to="/provider/login" />;
 };
 
 function Router() {
@@ -37,11 +37,11 @@ function Router() {
     <Switch>
       <Route path="/">
         {/* <Home /> */}
-        <Home/>
+        <Home />
       </Route>
       <Route path="/provider/login">
         <Login />
-      </Route>    
+      </Route>
       <Route path="/provider/register">
         <Register />
       </Route>
@@ -49,38 +49,38 @@ function Router() {
         <ForgotPassword />
       </Route>
       <Route path="/provider/dashboard">
-        <IsAuthentication> <Dashboard /> </IsAuthentication>
+        <IsAuthenticated> <Dashboard /> </IsAuthenticated>
       </Route>
       <Route path="/provider/chat">
-        <Chat />
+        <IsAuthenticated>  <Chat /> </IsAuthenticated>
       </Route>
       <Route path="/provider/video_conference">
-        <VideoConference />
+        <IsAuthenticated>   <VideoConference /> </IsAuthenticated>
       </Route>
       <Route path="/provider/report">
-        <Report />
+        <IsAuthenticated>  <Report /> </IsAuthenticated>
       </Route>
       <Route path="/provider/manage_history">
-        <MeetingHistory />
+        <IsAuthenticated>  <MeetingHistory /> </IsAuthenticated>
       </Route>
-      <Route path="/provider/user_setting">
-        <UserSettings />
+      <Route path="/proviader/user_setting">
+        <IsAuthenticated>  <UserSettings /> </IsAuthenticated>
       </Route>
       <Route path="/provider/admin_setting">
-        <AdminSettings />
+        <IsAuthenticated>  <AdminSettings /> </IsAuthenticated>
       </Route>
       <Route path="/provider/live_video">
-        <LiveChat />
+        <IsAuthenticated>   <LiveChat /> </IsAuthenticated>
 
       </Route>
       <Route path="/patient/intro">
         <PatientIntro />
       </Route>
       <Route path="/patient/live_video">
-      <LiveVideoChat/>
+        <LiveVideoChat />
       </Route>
       <Route path="/patient/summary">
-      <Summary/>
+        <Summary />
       </Route>
       {/* <Route component={NotFound} /> */}
     </Switch>

@@ -21,6 +21,7 @@ export function Navbar() {
     };
     const handleMenuClose = () => {
       setAnchorEl(null);
+      localStorage.removeItem("accessToken");
       navigate("/")
     };
 

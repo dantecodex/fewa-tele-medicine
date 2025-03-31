@@ -13,12 +13,17 @@ import {
 } from "@mui/material";
 import { navigate } from "wouter/use-browser-location";
 
+const API_BASE_URL = "http://localhost:2000/api/v1";
+
 // Validation Schemas
 const signUpSchema = yup.object().shape({
-  name: yup.string().required("Practice username is required"),
+  first: yup.string().required("First name is required"),
+  last: yup.string().required("Last name is required"),
+  phone: yup.string().required("Phone number is required"),
+  username: yup.string().required("Username is required"),
   email: yup.string().required("Email is required").email("Invalid email address"),
+  password: yup.string().required("Password is required"),
 });
-
 const otpSchema = yup.object().shape({
   otp: yup.string().required("One-time password is required"),
 });
@@ -35,6 +40,8 @@ const passwordSchema = yup.object().shape({
 const Registration = () => {
   const [currentSection, setCurrentSection] = useState("signUp");
   const [message, setMessage] = useState("");
+  const [email, setEmail] = useState("");
+  const [token, setToken] = useState("");
   const [storedOtp, setStoredOtp] = useState(""); // Simulating OTP storage
 
   const {
@@ -51,27 +58,91 @@ const Registration = () => {
         : passwordSchema
     ),
   });
+const handleSubmitData= async (data)=>{
+  try{
+    const response  = await fetch("url")
 
-  const onSubmit = (data: any) => {
+    console.log("Data", data)
+
+  } catch(error){
+     console.log("Error", error)
+  }
+}
+  const onSubmit = async (data) => {
     if (currentSection === "signUp") {
-      console.log("Sign Up Data:", data);
-      localStorage.setItem("registrationData", JSON.stringify(data));
-      const generatedOtp = Math.floor(1000 + Math.random() * 9000).toString();
-      setStoredOtp(generatedOtp); // Store OTP
-      console.log("Generated OTP (for testing):", generatedOtp);
-      setMessage("Your OTP has been sent to your email.");
-      setCurrentSection("verifyOtpSection");
-    } else if (currentSection === "verifyOtpSection") {
-      if (data.otp !== storedOtp) {
-        setMessage("Invalid OTP. Please try again.");
-        return;
+      try {
+        const response = await fetch(`${API_BASE_URL}/auth/signup`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            first: data.first,
+            last: data.last,
+            phone: data.phone,
+            username: data.username,
+            email: data.email,
+            password: data.password,
+          }),
+        });
+        const result = await response.json();
+        if (result.success) {
+          localStorage.setItem("regData", JSON.stringify(data));
+          setEmail(data.email);
+          setToken(result.token);
+          setMessage("OTP has been sent to your email.");
+          setCurrentSection("verifyOtpSection");
+        } else {
+          setMessage(result.message || "Signup failed.");
+        }
+      } catch (error) {
+        setMessage("An error occurred. Please try again.");
       }
-      setMessage("");
-      setCurrentSection("showSetPasswordSection");
+    } else if (currentSection === "verifyOtpSection") {
+      try {
+        const response = await fetch(`${API_BASE_URL}/verify-otp`, {
+          method: "POST",
+          headers: { 
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+          },
+          body: JSON.stringify({ email, otp: data.otp }),
+        });
+        const result = await response.json();
+        if (result.success) {
+          if (data.otp !== storedOtp) {
+            setMessage("Invalid OTP. Please try again.");
+            return;
+          }
+          setMessage("");
+          setCurrentSection("showSetPasswordSection");
+        } else {
+          setMessage("Invalid OTP. Please try again.");
+        }
+      } catch (error) {
+        setMessage("An error occurred. Please try again.");
+      }
     } else if (currentSection === "showSetPasswordSection") {
-      console.log("Final Registration Data:", data);
-      setMessage("Account setup complete!");
-      navigate("/provider/login");
+      try {
+        const response = await fetch(`${API_BASE_URL}/set-password`, {
+          method: "POST",
+          headers: { 
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+          },
+          body: JSON.stringify({
+            adminEmail: data.adminEmail,
+            password: data.password,
+          }),
+        });
+        const result = await response.json();
+        if (result.success) {
+          setMessage("Account setup complete!");
+          navigate("/provider/login");
+        } else {
+          setMessage("Failed to set password.");
+        }
+      } catch (error) {
+        setMessage("An error occurred. Please try again.");
+      }
     }
   };
 
@@ -107,32 +178,28 @@ const Registration = () => {
                 {/* Step 1: Signup Form */}
                 {currentSection === "signUp" && (
                   <>
-                    <Grid item xs={12}>
-                      <TextField
-                        fullWidth
-                        label="Practice Username"
-                        {...register("name")}
-                        error={!!errors.name}
-                        helperText={errors.name?.message}
-                      />
-                    </Grid>
-
-                    <Grid item xs={12}>
-                      <TextField
-                        fullWidth
-                        label="Email Address"
-                        {...register("email")}
-                        error={!!errors.email}
-                        helperText={errors.email?.message}
-                      />
-                    </Grid>
-
-                    <Grid item xs={12}>
-                      <Button type="submit" variant="contained" color="primary" fullWidth>
-                        Sign Up
-                      </Button>
-                    </Grid>
-                  </>
+                  <Grid item xs={12}>
+                    <TextField fullWidth label="First Name" {...register("first")} error={!!errors.first} helperText={errors.first?.message} />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <TextField fullWidth label="Last Name" {...register("last")} error={!!errors.last} helperText={errors.last?.message} />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <TextField fullWidth label="Phone Number" {...register("phone")} error={!!errors.phone} helperText={errors.phone?.message} />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <TextField fullWidth label="Username" {...register("username")} error={!!errors.username} helperText={errors.username?.message} />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <TextField fullWidth label="Email Address" {...register("email")} error={!!errors.email} helperText={errors.email?.message} />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <TextField fullWidth type="password" label="Password" {...register("password")} error={!!errors.password} helperText={errors.password?.message} />
+                  </Grid>
+                  <Grid item xs={12}>
+                   <Button type="submit" variant="contained" color="primary" fullWidth>Sign Up</Button>
+                 </Grid>
+                </>
                 )}
 
                 {/* Step 2: OTP Verification */}

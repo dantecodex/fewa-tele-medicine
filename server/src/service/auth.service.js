@@ -192,7 +192,7 @@ const sendForgotPasswordOTP = async ({ email }) => {
   const sendPasswordResetOTPOptions = {
     email: user.email,
     subject: "Password reset link",
-    message: `${process.env.PUBLIC_URL}/forgot-password?token=${passwordResetOTP}`,
+    message: `Password reset OTP: ${[passwordResetOTP]}`,
   }
   await sendEmail(sendPasswordResetOTPOptions)
 }

@@ -25,7 +25,7 @@ const verifyEmail = asyncErrorHandler(async (req, res) => {
 })
 
 const resendVerifyEmailOTP = asyncErrorHandler(async (req, res) => {
-  const validatedData = await authValidation.initiateForgotPassword.validate(req.body)
+  const validatedData = await authValidation.sendForgotPasswordOTP.validate(req.body)
   const data = await authService.resendVerifyEmailOTP(validatedData)
   res.status(200).json(
     apiResponseHandler("OTP sent successfully", data)

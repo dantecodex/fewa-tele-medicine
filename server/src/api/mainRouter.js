@@ -10,7 +10,13 @@ const apiRouter = express.Router()
 
 apiRouter.route("/auth/signup").post(rateLimiter(10, "15min"), authController.signup)
 apiRouter.route("/auth/login").post(rateLimiter(5, "10min"), authController.login)
+apiRouter.route("/auth/resend-verify-email").post(rateLimiter(3, "10min"), authController.resendVerifyEmailOTP)
 apiRouter.route("/auth/verify-email").post(rateLimiter(5, "10min"), authController.verifyEmail)
+
+apiRouter.route("/auth/forgot-password")
+  .post(rateLimiter(5, "10min"), authController.sendForgotPasswordOTP)
+  .get(rateLimiter(5, "10min"), authController.verifyForgotPasswordOTP)
+  .patch(rateLimiter(5, "10min"), authController.resetForgotPassword)
 
 apiRouter.use(checkAuth)
 

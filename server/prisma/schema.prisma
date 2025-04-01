@@ -8,20 +8,22 @@ datasource db {
 }
 
 model User {
-  id                  Int       @id @default(autoincrement())
-  first               String
-  last                String
-  phone               String    @unique
-  username            String    @unique
-  email               String    @unique
-  password            String
-  otp                 String?
-  otp_expires_at      DateTime?
-  created_at          DateTime  @default(now())
-  updated_at          DateTime  @updatedAt
-  deleted_at          DateTime?
-  last_login          DateTime?
-  is_active           Boolean   @default(true)
-  is_verified         Boolean   @default(false)
-  password_changed_at DateTime  @default(now())
+  id                            Int       @id @default(autoincrement())
+  first                         String
+  last                          String
+  phone                         String    @unique
+  username                      String    @unique
+  email                         String    @unique
+  password                      String
+  otp                           String?   @unique
+  otp_expires_at                DateTime?
+  created_at                    DateTime  @default(now())
+  updated_at                    DateTime  @updatedAt
+  deleted_at                    DateTime?
+  last_login                    DateTime?
+  is_active                     Boolean   @default(true)
+  is_verified                   Boolean   @default(false)
+  password_changed_at           DateTime  @default(now())
+  password_reset_otp            String?   @unique
+  password_reset_otp_expires_at DateTime?
 }

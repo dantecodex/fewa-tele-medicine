@@ -1,10 +1,11 @@
 import * as argon2 from "argon2"
+import crypto from "crypto"
+import jwt from "jsonwebtoken"
+
 import prisma from "../../prisma/client/prismaClient.js"
 import CustomError from "../utils/customErrorHandler.js"
-import jwt from "jsonwebtoken"
 import logger from "../utils/logger.js"
 import sendEmail from "../utils/sendEmail.js"
-import crypto from "crypto"
 
 const JWT_CONFIG = {
   algorithm: "HS256",
@@ -23,19 +24,6 @@ const generateToken = (userId) => {
 }
 const signup = async (validatedData) => {
 
-  // const doesUserExistWithoutVerification = await prisma.user.findFirst({
-  //   where: {
-  //     OR: [
-  //       { email: validatedData.email },
-  //       { username: validatedData.username }
-  //     ]
-  //   }
-  // });
-
-  // if (doesUserExistWithoutVerification) {
-  //   throw new CustomError("User credentials already exist. Please verify your account with the OTP", 400, { emailVerificationPending: true });
-  // }
-
   const hashedPassword = await argon2.hash(validatedData.password, ARGON_CONFIG)
 
   const newUser = await prisma.user.create({
@@ -44,23 +32,23 @@ const signup = async (validatedData) => {
       password: hashedPassword,
       password_changed_at: new Date(),
       otp: crypto.randomInt(100000, 999999).toString(),
-      otp_expires_at: new Date(Date.now() + 10 * 60 * 1000)
+      otp_expires_at: new Date(Date.now() + 10 * 60 * 1000),
     },
-    select: { id: true, email: true, username: true, otp: true, created_at: true }
-  });
+    select: { id: true, email: true, username: true, otp: true, created_at: true },
+  })
 
   const sendOtpEmailOptions = {
     email: newUser.email,
     subject: "Verify Email address",
-    message: `Email Verification OTP: ${newUser.otp}`
+    message: `Email Verification OTP: ${newUser.otp}`,
   }
   await sendEmail(sendOtpEmailOptions)
   logger.info(`User created: ${newUser.email}`)
 
   return {
     ...newUser,
-    accessToken: generateToken(newUser.id),
-    otp: undefined
+    // accessToken: generateToken(newUser.id),
+    otp: undefined,
   }
 }
 
@@ -74,9 +62,18 @@ const login = async (validatedData) => {
         { username: { equals: identifier, mode: "insensitive" } },
       ],
     },
-    select: { id: true, first: true, last: true, email: true, username: true, created_at: true, is_verified: true, is_active: true, password: true }
+    select: {
+      id: true,
+      first: true,
+      last: true,
+      email: true,
+      username: true,
+      created_at: true,
+      is_verified: true,
+      is_active: true,
+      password: true,
+    },
   })
-  console.log(user);
 
   if (!user || !(await argon2.verify(user.password, password))) {
     logger.warn(`Failed login attempt for: ${identifier}`)
@@ -108,28 +105,151 @@ const login = async (validatedData) => {
 }
 
 const verifyEmail = async ({ otp }) => {
-  if (otp.length !== 6) throw new CustomError("Invalid OTP", 400);
+  if (otp.length !== 6) throw new CustomError("Invalid OTP", 400)
 
   const user = await prisma.user.findFirst({
-    where: { otp, is_verified: false }
-  });
+    where: { otp, is_verified: false },
+  })
 
   if (!user) {
-    logger.warn("Invalid OTP entered for email verification");
-    throw new CustomError("Invalid OTP", 400);
+    logger.warn("Invalid OTP entered for email verification")
+    throw new CustomError("Invalid OTP", 400)
   }
 
   if (user.otp_expires_at && user.otp_expires_at < new Date()) {
-    logger.warn(`OTP expired for user: ${user.id}`);
-    throw new CustomError("OTP expired, Please verify again", 400, { otpExpired: true });
+    logger.warn(`OTP expired for user: ${user.id}`)
+    throw new CustomError("OTP expired, Please verify again", 400, { otpExpired: true })
   }
 
   await prisma.user.update({
     where: { id: user.id },
-    data: { is_verified: true, otp: null, otp_expires_at: null }
-  });
+    data: { is_verified: true, otp: null, otp_expires_at: null },
+  })
 
-  logger.info(`User ${user.id} verified successfully`);
-};
+  logger.info(`User ${user.id} verified successfully`)
+  return {
+    emailVerified: true
+  }
+}
 
-export default { signup, login, verifyEmail }
+const resendVerifyEmailOTP = async ({ email }) => {
+  const user = await prisma.user.findUnique({
+    where: { email }
+  })
+
+  if (!user) {
+    logger.warn("User not found with entered email for to resend verify email OTP")
+    throw new CustomError("User not found with the entered email", 404)
+  }
+
+  const newOTP = crypto.randomInt(100000, 999999).toString()
+  await prisma.user.update({
+    where: { id: user.id },
+    data: {
+      otp: newOTP,
+      otp_expires_at: new Date(Date.now() + 10 * 60 * 1000)
+    }
+  })
+
+
+  const sendOtpEmailOptions = {
+    email: user.email,
+    subject: "Verify Email address",
+    message: `Email Verification OTP: ${newOTP}`,
+  }
+  await sendEmail(sendOtpEmailOptions)
+  logger.info(`Resent email verification otp`)
+  return {
+    otpResent: true
+  }
+}
+
+const sendForgotPasswordOTP = async ({ email }) => {
+  const user = await prisma.user.findUnique({
+    where: { email },
+  })
+
+  if (!user) {
+    logger.warn(`Invalid email address provided for password reset: ${email}`);
+    throw new CustomError("Invalid email address provided", 404);
+  }
+
+  if (!user.is_active) {
+    logger.warn(`Forgot Password attempt for deactivated account: ${user.id}`)
+    throw new CustomError("Account deactivated", 403)
+  }
+
+  const passwordResetOTP = crypto.randomInt(100000, 999999).toString()
+
+  await prisma.user.update({
+    where: { id: user.id },
+    data: {
+      password_reset_otp: passwordResetOTP,
+      password_reset_otp_expires_at: new Date(Date.now() + 10 * 60 * 1000),
+    },
+  })
+
+  const sendPasswordResetOTPOptions = {
+    email: user.email,
+    subject: "Password reset link",
+    message: `${process.env.PUBLIC_URL}/forgot-password?token=${passwordResetOTP}`,
+  }
+  await sendEmail(sendPasswordResetOTPOptions)
+}
+
+const verifyForgotPasswordOTP = async ({ otp }) => {
+  const user = await prisma.user.findUnique({
+    where: { password_reset_otp: otp }
+  })
+  if (!user) {
+    logger.warn(`Invalid OTP has been provided`)
+    throw new CustomError("Invalid OTP has been provided", 400)
+  }
+
+  if (user.password_reset_otp_expires_at < new Date()) {
+    logger.warn(`Forgot password OTP has been expxired for ${user.id}`)
+    throw new CustomError("Forgot password OTP has been expired, Please try again", 400)
+  }
+
+  await prisma.user.update({
+    where: { id: user.id },
+    data: {
+      password_reset_otp: null,
+      password_reset_otp_expires_at: null
+    }
+  })
+
+  const resetPasswordToken = jwt.sign({ email: user.email }, process.env.JWT_SECRET, { expiresIn: "10m" })
+
+  return {
+    forgotPasswordOTPVerfied: true,
+    resetPasswordToken
+  }
+
+}
+
+const resetForgotPassword = async ({ password, resetPasswordToken }) => {
+  const { email } = jwt.verify(resetPasswordToken, process.env.JWT_SECRET)
+  if (!email) {
+    logger.warn("User tried to reset password with an invalid token");
+    throw new CustomError("Invalid reset password token", 400);
+  }
+  const user = await prisma.user.findUnique({
+    where: {
+      email
+    }
+  })
+
+  const newHashedPassword = await argon2.hash(password, ARGON_CONFIG);
+  await prisma.user.update({
+    where: { id: user.id },
+    data: {
+      password: newHashedPassword,
+      password_changed_at: new Date()
+    },
+  })
+}
+
+
+
+export default { signup, login, verifyEmail, sendForgotPasswordOTP, verifyForgotPasswordOTP, resetForgotPassword, resendVerifyEmailOTP }

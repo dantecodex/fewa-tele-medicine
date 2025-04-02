@@ -28,6 +28,7 @@ import Summary from "./patient/summary/Summary.tsx";
 const queryClient = new QueryClient();
 
 const IsAuthenticated = ({ children }) => {
+  console.log("children", children);
   const isAuthenticated = localStorage.getItem("accessToken"); // Check if token exists
   return isAuthenticated ? children : <Navigate to="/provider/login" />;
 };
@@ -63,7 +64,7 @@ function Router() {
       <Route path="/provider/manage_history">
         <IsAuthenticated>  <MeetingHistory /> </IsAuthenticated>
       </Route>
-      <Route path="/proviader/user_setting">
+      <Route path="/provider/user_setting">
         <IsAuthenticated>  <UserSettings /> </IsAuthenticated>
       </Route>
       <Route path="/provider/admin_setting">

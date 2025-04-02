@@ -44,6 +44,8 @@ const Registration = () => {
   const [token, setToken] = useState("");
   const [storedOtp, setStoredOtp] = useState(""); // Simulating OTP storage
 
+// http://localhost:4200/ClientApp/#/ClientApp/patient/live
+
   const {
     register,
     handleSubmit,
@@ -58,16 +60,7 @@ const Registration = () => {
         : passwordSchema
     ),
   });
-const handleSubmitData= async (data)=>{
-  try{
-    const response  = await fetch("url")
 
-    console.log("Data", data)
-
-  } catch(error){
-     console.log("Error", error)
-  }
-}
   const onSubmit = async (data) => {
     if (currentSection === "signUp") {
       try {
@@ -104,16 +97,18 @@ const handleSubmitData= async (data)=>{
             "Content-Type": "application/json",
             "Authorization": `Bearer ${token}`
           },
-          body: JSON.stringify({ email, otp: data.otp }),
+          body: JSON.stringify({otp: data.otp }),
         });
         const result = await response.json();
         if (result.success) {
-          if (data.otp !== storedOtp) {
-            setMessage("Invalid OTP. Please try again.");
-            return;
-          }
-          setMessage("");
-          setCurrentSection("showSetPasswordSection");
+          console.log("OTP Verification Result:", result);
+          // if (data.otp !== storedOtp) {
+          //   setMessage("Invalid OTP. Please try again.");
+          //   return;
+          // }
+          setMessage(result.message || "OTP verified successfully.");
+          navigate("/provider/login");
+          // setCurrentSection("showSetPasswordSection");
         } else {
           setMessage("Invalid OTP. Please try again.");
         }

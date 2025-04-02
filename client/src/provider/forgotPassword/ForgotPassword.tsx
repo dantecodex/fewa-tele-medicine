@@ -31,10 +31,12 @@ const schema = yup.object().shape({
       .required("Password confirmation is required"),
   }),
 });
-
+const API_BASE_URL = "http://localhost:2000/api/v1";
 const ForgotPassword = () => {
   const [step, setStep] = useState(1);
   const [messages, setMessages] = useState({ otpSent: "", otpError: "", resetError: "" });
+  const [email, setEmail] = useState("");
+  const [resetPasswordToken, setResetPasswordToken] = useState("");
 
   const {
     register,
@@ -42,14 +44,86 @@ const ForgotPassword = () => {
     formState: { errors },
   } = useForm({ resolver: yupResolver(schema) });
 
+
+
+    // Function to send OTP
+    const sendOTP = async (data: any) => {
+      try {
+        const response = await fetch(`${API_BASE_URL}/auth/forgot-password`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email: data.email_username }),
+        });
+    
+        const result = await response.json();
+        console.log("OTP API Response:", result);
+    
+        if (result.success) {
+          setEmail(data.email_username);
+          setMessages(result?.message || "Your OTP has been sent to your email.");
+          setStep(2);
+        } else {
+          setMessages(prev => ({ ...prev, otpError: result.message || "Failed to send OTP" }));
+        }
+      } catch (error) {
+        console.error("OTP API Error:", error);
+        setMessages(prev => ({ ...prev, otpError: "An error occurred. Please try again." }));
+      }
+    };
+    
+  
+    // Function to verify OTP
+    const verifyOTP = async (data: any) => {
+      try {
+        const response = await fetch(`${API_BASE_URL}/auth/forgot-password?otp=${data.otp}`, {
+          method: "GET",
+          headers: { "Content-Type": "application/json" },
+          // body: JSON.stringify({ otp: data.otp }),
+        });
+  
+        const result = await response.json();
+        if (result.success) {
+          console.log("resetToken:", result);
+          setResetPasswordToken(result?.data?.resetPasswordToken);
+          setMessages(result?.message || "OTP verified successfully.");
+          setStep(3);
+        } else {
+          setMessages({ ...messages, otpError: result.message || "Invalid OTP" });
+        }
+      } catch (error) {
+        setMessages({ ...messages, otpError: "An error occurred. Please try again." });
+      }
+    };
+  
+    // Function to reset password
+    const resetPassword = async (data: any) => {
+      try {
+        const response = await fetch(`${API_BASE_URL}/auth/forgot-password`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({password: data.password , resetPasswordToken: resetPasswordToken }),
+        });
+  
+        const result = await response.json();
+        if (result.success) {
+          setMessages(result.message);
+          setStep(1);
+        } else {
+          setMessages({ ...messages, resetError: result.message || "Failed to reset password" });
+        }
+      } catch (error) {
+        setMessages({ ...messages, resetError: "An error occurred. Please try again." });
+      }
+    };
+
+    // Handle form submission
   const onSubmit = (data: any) => {
     if (step === 1) {
-      setMessages({ ...messages, otpSent: "Your OTP has been sent to your email." });
-      setStep(2);
+      sendOTP(data);
     } else if (step === 2) {
-      setStep(3);
+      verifyOTP(data);
     } else if (step === 3) {
-      setMessages({ ...messages, otpSent: "", resetError: "Password reset successfully!" });
+      resetPassword(data);
     }
   };
 

@@ -10,6 +10,10 @@ import {
   Paper,
   Box,
   Container,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
 } from "@mui/material";
 import { navigate } from "wouter/use-browser-location";
 
@@ -74,6 +78,7 @@ const Registration = () => {
             username: data.username,
             email: data.email,
             password: data.password,
+            role: data.role
           }),
         });
         const result = await response.json();
@@ -191,6 +196,21 @@ const Registration = () => {
                   <Grid item xs={12}>
                     <TextField fullWidth type="password" label="Password" {...register("password")} error={!!errors.password} helperText={errors.password?.message} />
                   </Grid>
+                  <Grid item xs={12}>
+                  <FormControl fullWidth error={!!errors.role}>
+                    <InputLabel>Role</InputLabel>
+                    <Controller
+                      name="role"
+                      control={control}
+                      render={({ field }) => (
+                        <Select {...field} label="Role">
+                          <MenuItem value="Patient">Patient</MenuItem>
+                          <MenuItem value="Doctor">Doctor</MenuItem>
+                        </Select>
+                      )}
+                    />
+                  </FormControl>
+                </Grid>
                   <Grid item xs={12}>
                    <Button type="submit" variant="contained" color="primary" fullWidth>Sign Up</Button>
                  </Grid>

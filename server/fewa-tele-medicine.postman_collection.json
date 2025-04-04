@@ -1,9 +1,9 @@
 {
 	"info": {
-		"_postman_id": "c8ed9d67-18e2-4d7b-8d10-289499b0b644",
+		"_postman_id": "71ca0562-aa1a-4794-ab4b-436a64e2efb6",
 		"name": "fewa-tele-medicine",
-		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
-		"_exporter_id": "34579844"
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "41182395"
 	},
 	"item": [
 		{
@@ -13,32 +13,26 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"first\": \"saurbh\",\n    \"last\": \"jain\",\n    \"email\": \"saurbh2212@gmail.com\",\n    \"phone\": \"9876543225021\",\n    \"username\": \"saurbh124\",\n    \"password\": \"password\"\n}",
+					"raw": "{\n    \"first\": \"saurbh\",\n    \"last\": \"jain\",\n    \"email\": \"saurbh3212@gmail.com\",\n    \"phone\": \"987654325021\",\n    \"username\": \"saurbh1245\",\n    \"password\": \"password\",\n    \"role\": \"PATIENT\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
 						}
 					}
 				},
-				"url": "localhost:2000/api/v1/auth/signup"
-			},
-			"response": []
-		},
-		{
-			"name": "Login",
-			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"identifier\": \"saurbh124\",\n    \"password\": \"password1\"\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": "localhost:2000/api/v1/auth/login"
+				"url": {
+					"raw": "localhost:2000/api/v1/auth/signup",
+					"host": [
+						"localhost"
+					],
+					"port": "2000",
+					"path": [
+						"api",
+						"v1",
+						"auth",
+						"signup"
+					]
+				}
 			},
 			"response": []
 		},
@@ -56,12 +50,24 @@
 						}
 					}
 				},
-				"url": "localhost:2000/api/v1/auth/verify-email"
+				"url": {
+					"raw": "localhost:2000/api/v1/auth/verify-email",
+					"host": [
+						"localhost"
+					],
+					"port": "2000",
+					"path": [
+						"api",
+						"v1",
+						"auth",
+						"verify-email"
+					]
+				}
 			},
 			"response": []
 		},
 		{
-			"name": "send email verification otp",
+			"name": "Resend email verification otp",
 			"request": {
 				"method": "POST",
 				"header": [],
@@ -74,12 +80,54 @@
 						}
 					}
 				},
-				"url": "localhost:2000/api/v1/auth/resend-verify-email"
+				"url": {
+					"raw": "localhost:2000/api/v1/auth/resend-verify-email",
+					"host": [
+						"localhost"
+					],
+					"port": "2000",
+					"path": [
+						"api",
+						"v1",
+						"auth",
+						"resend-verify-email"
+					]
+				}
 			},
 			"response": []
 		},
 		{
-			"name": "send forget password otp",
+			"name": "Login",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"identifier\": \"saurbh124\",\n    \"password\": \"password1\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:2000/api/v1/auth/login",
+					"host": [
+						"localhost"
+					],
+					"port": "2000",
+					"path": [
+						"api",
+						"v1",
+						"auth",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Send forget password otp",
 			"request": {
 				"method": "POST",
 				"header": [],
@@ -92,7 +140,19 @@
 						}
 					}
 				},
-				"url": "localhost:2000/api/v1/auth/forgot-password"
+				"url": {
+					"raw": "localhost:2000/api/v1/auth/forgot-password",
+					"host": [
+						"localhost"
+					],
+					"port": "2000",
+					"path": [
+						"api",
+						"v1",
+						"auth",
+						"forgot-password"
+					]
+				}
 			},
 			"response": []
 		},
@@ -136,7 +196,7 @@
 			"response": []
 		},
 		{
-			"name": "forget password with token",
+			"name": "Forget password with token",
 			"request": {
 				"method": "PATCH",
 				"header": [],
@@ -149,7 +209,19 @@
 						}
 					}
 				},
-				"url": "localhost:2000/api/v1/auth/forgot-password"
+				"url": {
+					"raw": "localhost:2000/api/v1/auth/forgot-password",
+					"host": [
+						"localhost"
+					],
+					"port": "2000",
+					"path": [
+						"api",
+						"v1",
+						"auth",
+						"forgot-password"
+					]
+				}
 			},
 			"response": []
 		}

@@ -26,4 +26,10 @@ model User {
   password_changed_at           DateTime  @default(now())
   password_reset_otp            String?   @unique
   password_reset_otp_expires_at DateTime?
+  role                          Role
+}
+
+enum Role {
+  ADMIN
+  PATIENT
 }

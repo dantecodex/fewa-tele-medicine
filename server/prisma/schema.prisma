@@ -23,6 +23,7 @@ model User {
   updated_at                    DateTime  @updatedAt
   deleted_at                    DateTime?
   last_login                    DateTime?
+  degree                        String?
   is_active                     Boolean   @default(true)
   is_verified                   Boolean   @default(false)
   password_changed_at           DateTime  @default(now())

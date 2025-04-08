@@ -72,6 +72,8 @@ const login = async (validatedData) => {
       is_active: true,
       password: true,
       role: true,
+      degree: true,
+      designation: true
     },
   })
 

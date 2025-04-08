@@ -39,7 +39,8 @@ const updateProfile = async (validatedData, userID) => {
       username: true,
       email: true,
       title: true,
-      designation: true
+      designation: true,
+      degree: true
     }
   })
 

@@ -22,6 +22,7 @@ const doctorFields = {
   ...baseProfileFields,
   title: joi.string().allow("DR").empty(""),
   designation: joi.string().min(2).empty(""),
+  degree: joi.string().min(2).empty("")
 }
 
 const patientProfile = new ValidationHelper(patientFields)

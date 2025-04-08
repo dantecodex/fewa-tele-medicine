@@ -5,6 +5,7 @@ import userValidation from "../validation/user.validation.js"
 
 const updateProfile = asyncErrorHandler(async (req, res) => {
   const { role, ...profileData } = req.body
+  console.log(profileData);
 
   const validatorMap = {
     DOCTOR: userValidation.doctorProfile,

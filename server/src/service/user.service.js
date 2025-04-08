@@ -32,6 +32,15 @@ const updateProfile = async (validatedData, userID) => {
   const updatedUser = await prisma.user.update({
     where: { id: userID },
     data: validatedData,
+    select: {
+      first: true,
+      last: true,
+      role: true,
+      username: true,
+      email: true,
+      title: true,
+      designation: true
+    }
   })
 
   return updatedUser

@@ -4,6 +4,7 @@ import helmet from "helmet"
 import compression from "compression"
 import httpErrors from "http-errors"
 import "dotenv/config"
+import morgan from "morgan"
 
 import logger from "./src/utils/logger.js"
 import apiRouter from "./src/api/mainRouter.js"
@@ -47,12 +48,15 @@ app.use(
 )
 
 app.use(rateLimiter(1000, "1h"))
+app.use(morgan('dev'))
 app.use(requestId)
 
 app.use(compression())
 
 app.use(express.json({ limit: "10kb" }))
-app.use(express.urlencoded({ extended: true, limit: "10kb" }))
+app.use(express.urlencoded({ extended: true }))
+app.use(express.static("public"))
+
 
 const corsOptions = {
   origin: process.env.CORS_ORIGINS?.split(",") || "*",

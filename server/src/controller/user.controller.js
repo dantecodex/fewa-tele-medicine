@@ -4,16 +4,15 @@ import asyncErrorHandler from "../utils/asyncErrorHandler.js"
 import userValidation from "../validation/user.validation.js"
 
 const updateProfile = asyncErrorHandler(async (req, res) => {
-  const { role, ...profileData } = req.body
-  console.log(profileData);
+  const role = req.user.role
 
   const validatorMap = {
-    DOCTOR: userValidation.doctorProfile,
+    ADMIN: userValidation.doctorProfile,
     PATIENT: userValidation.patientProfile,
   }
 
   const validator = validatorMap[role] || userValidation.patientProfile
-  const validatedData = validator.validate(profileData)
+  const validatedData = validator.validate(req.body)
 
   const updatedUser = await userService.updateProfile(validatedData, req.user.id)
 

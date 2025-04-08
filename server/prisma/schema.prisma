@@ -9,6 +9,8 @@ datasource db {
 
 model User {
   id                            Int       @id @default(autoincrement())
+  title                         Title?
+  designation                   String?
   first                         String
   last                          String
   phone                         String    @unique
@@ -32,4 +34,11 @@ model User {
 enum Role {
   ADMIN
   PATIENT
+}
+
+enum Title {
+  DR
+  MR
+  MRS
+  MISS
 }

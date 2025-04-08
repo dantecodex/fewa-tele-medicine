@@ -23,7 +23,6 @@ const generateToken = (userId) => {
   return jwt.sign({ id: userId }, process.env.JWT_SECRET, JWT_CONFIG)
 }
 const signup = async (validatedData) => {
-
   const hashedPassword = await argon2.hash(validatedData.password, ARGON_CONFIG)
 
   const newUser = await prisma.user.create({
@@ -72,7 +71,7 @@ const login = async (validatedData) => {
       is_verified: true,
       is_active: true,
       password: true,
-      role: true
+      role: true,
     },
   })
 
@@ -129,13 +128,13 @@ const verifyEmail = async ({ otp }) => {
 
   logger.info(`User ${user.id} verified successfully`)
   return {
-    emailVerified: true
+    emailVerified: true,
   }
 }
 
 const resendVerifyEmailOTP = async ({ email }) => {
   const user = await prisma.user.findUnique({
-    where: { email }
+    where: { email },
   })
 
   if (!user) {
@@ -148,10 +147,9 @@ const resendVerifyEmailOTP = async ({ email }) => {
     where: { id: user.id },
     data: {
       otp: newOTP,
-      otp_expires_at: new Date(Date.now() + 10 * 60 * 1000)
-    }
+      otp_expires_at: new Date(Date.now() + 10 * 60 * 1000),
+    },
   })
-
 
   const sendOtpEmailOptions = {
     email: user.email,
@@ -161,7 +159,7 @@ const resendVerifyEmailOTP = async ({ email }) => {
   await sendEmail(sendOtpEmailOptions)
   logger.info(`Resent email verification otp`)
   return {
-    otpResent: true
+    otpResent: true,
   }
 }
 
@@ -171,8 +169,8 @@ const sendForgotPasswordOTP = async ({ email }) => {
   })
 
   if (!user) {
-    logger.warn(`Invalid email address provided for password reset: ${email}`);
-    throw new CustomError("Invalid email address provided", 404);
+    logger.warn(`Invalid email address provided for password reset: ${email}`)
+    throw new CustomError("Invalid email address provided", 404)
   }
 
   if (!user.is_active) {
@@ -200,7 +198,7 @@ const sendForgotPasswordOTP = async ({ email }) => {
 
 const verifyForgotPasswordOTP = async ({ otp }) => {
   const user = await prisma.user.findUnique({
-    where: { password_reset_otp: otp }
+    where: { password_reset_otp: otp },
   })
   if (!user) {
     logger.warn(`Invalid OTP has been provided`)
@@ -216,41 +214,48 @@ const verifyForgotPasswordOTP = async ({ otp }) => {
     where: { id: user.id },
     data: {
       password_reset_otp: null,
-      password_reset_otp_expires_at: null
-    }
+      password_reset_otp_expires_at: null,
+    },
   })
 
-  const resetPasswordToken = jwt.sign({ email: user.email }, process.env.JWT_SECRET, { expiresIn: "10m" })
+  const resetPasswordToken = jwt.sign({ email: user.email }, process.env.JWT_SECRET, {
+    expiresIn: "10m",
+  })
 
   return {
     forgotPasswordOTPVerfied: true,
-    resetPasswordToken
+    resetPasswordToken,
   }
-
 }
 
 const resetForgotPassword = async ({ password, resetPasswordToken }) => {
   const { email } = jwt.verify(resetPasswordToken, process.env.JWT_SECRET)
   if (!email) {
-    logger.warn("User tried to reset password with an invalid token");
-    throw new CustomError("Invalid reset password token", 400);
+    logger.warn("User tried to reset password with an invalid token")
+    throw new CustomError("Invalid reset password token", 400)
   }
   const user = await prisma.user.findUnique({
     where: {
-      email
-    }
+      email,
+    },
   })
 
-  const newHashedPassword = await argon2.hash(password, ARGON_CONFIG);
+  const newHashedPassword = await argon2.hash(password, ARGON_CONFIG)
   await prisma.user.update({
     where: { id: user.id },
     data: {
       password: newHashedPassword,
-      password_changed_at: new Date()
+      password_changed_at: new Date(),
     },
   })
 }
 
-
-
-export default { signup, login, verifyEmail, sendForgotPasswordOTP, verifyForgotPasswordOTP, resetForgotPassword, resendVerifyEmailOTP }
+export default {
+  signup,
+  login,
+  verifyEmail,
+  sendForgotPasswordOTP,
+  verifyForgotPasswordOTP,
+  resetForgotPassword,
+  resendVerifyEmailOTP,
+}

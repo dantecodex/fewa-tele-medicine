@@ -7,7 +7,7 @@ const signup = new ValidationHelper({
   username: joi.string().min(3).trim().required(),
   email: joi.string().email().trim().required(),
   password: joi.string().min(6).required(),
-  role: joi.string().valid('ADMIN', 'PATIENT').required()
+  role: joi.string().valid("ADMIN", "PATIENT").required(),
 })
 const login = new ValidationHelper({
   identifier: joi.string().min(3).required(),
@@ -24,7 +24,7 @@ const sendForgotPasswordOTP = new ValidationHelper({
 
 const resetForgotPassword = new ValidationHelper({
   password: joi.string().min(6).required(),
-  resetPasswordToken: joi.string().required()
+  resetPasswordToken: joi.string().required(),
 })
 
 const verifyForgotPasswordOTP = new ValidationHelper({
@@ -37,5 +37,5 @@ export default {
   verifyEmail,
   sendForgotPasswordOTP,
   resetForgotPassword,
-  verifyForgotPasswordOTP
+  verifyForgotPasswordOTP,
 }

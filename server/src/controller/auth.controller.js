@@ -19,17 +19,13 @@ const login = asyncErrorHandler(async (req, res) => {
 const verifyEmail = asyncErrorHandler(async (req, res) => {
   const validatedData = authValidation.verifyEmail.validate(req.body)
   const data = await authService.verifyEmail(validatedData)
-  res.status(200).json(
-    apiResponseHandler("Email verified successfully", data)
-  )
+  res.status(200).json(apiResponseHandler("Email verified successfully", data))
 })
 
 const resendVerifyEmailOTP = asyncErrorHandler(async (req, res) => {
   const validatedData = await authValidation.sendForgotPasswordOTP.validate(req.body)
   const data = await authService.resendVerifyEmailOTP(validatedData)
-  res.status(200).json(
-    apiResponseHandler("OTP sent successfully", data)
-  )
+  res.status(200).json(apiResponseHandler("OTP sent successfully", data))
 })
 
 const sendForgotPasswordOTP = asyncErrorHandler(async (req, res) => {
@@ -46,17 +42,17 @@ const verifyForgotPasswordOTP = asyncErrorHandler(async (req, res) => {
   const validatedData = authValidation.verifyForgotPasswordOTP.validate({ otp: req.query?.otp })
 
   const data = await authService.verifyForgotPasswordOTP(validatedData)
-  res.status(200).json(
-    apiResponseHandler("Forgot password OTP has been varified", data)
-  )
+  res.status(200).json(apiResponseHandler("Forgot password OTP has been varified", data))
 })
 
 const resetForgotPassword = asyncErrorHandler(async (req, res) => {
   const validatedData = authValidation.resetForgotPassword.validate(req.body)
   await authService.resetForgotPassword(validatedData, req.query.token)
-  res.status(200).json(apiResponseHandler("Password has been reset successfully", {
-    passwordReset: true
-  }))
+  res.status(200).json(
+    apiResponseHandler("Password has been reset successfully", {
+      passwordReset: true,
+    })
+  )
 })
 
 export default {
@@ -66,5 +62,5 @@ export default {
   sendForgotPasswordOTP,
   resetForgotPassword,
   resendVerifyEmailOTP,
-  verifyForgotPasswordOTP
+  verifyForgotPasswordOTP,
 }

@@ -1222,10 +1222,10 @@ buffer-from@^1.0.0:
   resolved "https://registry.yarnpkg.com/buffer-from/-/buffer-from-1.1.2.tgz#2b146a6fd72e80b4f55d255f35ed59a3a9a41bd5"
   integrity sha512-E+XQCRwSbaaiChtv6k6Dwgc+bx+Bs6vuKJHHl5kox/BaKbhiXzqQOwK4cO22yElGp2OCmjwVhT3HmxgyPGnJfQ==
 
-bullmq@^5.46.1:
-  version "5.46.1"
-  resolved "https://registry.yarnpkg.com/bullmq/-/bullmq-5.46.1.tgz#623dbb304d78c9fad233115fc9b78e987f0a15bb"
-  integrity sha512-P764U7mC2ZJ1Ikdla0kYM7Ln5Cu0wSjL4TOA6Vz7X99kPOxdvfR9NhX9pKzmQmAc8MErHPIgrCurYOeDF4+0cA==
+bullmq@^5.47.3:
+  version "5.47.3"
+  resolved "https://registry.yarnpkg.com/bullmq/-/bullmq-5.47.3.tgz#34dc5074e895fbb1db15712a814d9df43934d7df"
+  integrity sha512-fVQWxV9zxFMYCDGPygIXYopTNXxkoAqnxhbWBD8XzPSWk8KwNw7f1hR3imRUrGWlG6RHJ2iXYY/N5WQJcI7cdg==
   dependencies:
     cron-parser "^4.9.0"
     ioredis "^5.4.1"
@@ -1234,6 +1234,13 @@ bullmq@^5.46.1:
     semver "^7.5.4"
     tslib "^2.0.0"
     uuid "^9.0.0"
+
+busboy@^1.0.0:
+  version "1.6.0"
+  resolved "https://registry.yarnpkg.com/busboy/-/busboy-1.6.0.tgz#966ea36a9502e43cdb9146962523b92f531f6893"
+  integrity sha512-8SFQbg/0hQ9xy3UNTB0YEnsNBbWfhf7RtnzpL7TkBiTBRfrQ9Fxcnz7VJsleJpyp6rVLvXiuORqjlHi5q+PYuA==
+  dependencies:
+    streamsearch "^1.1.0"
 
 bytes@3.1.2:
   version "3.1.2"
@@ -1524,7 +1531,7 @@ denque@^2.1.0:
   resolved "https://registry.yarnpkg.com/denque/-/denque-2.1.0.tgz#e93e1a6569fb5e66f16a3c2a2964617d349d6ab1"
   integrity sha512-HVQE3AAb/pxF8fQAoiqpvg9i3evqug3hoiwakOyZAwJm+6vZehbkYXZ0l4JxS+I3QxM97v5aaRNhj8v5oBhekw==
 
-depd@2.0.0:
+depd@2.0.0, depd@~2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/depd/-/depd-2.0.0.tgz#b696163cc757560d09cf22cc8fad1571b79e76df"
   integrity sha512-g7nH6P6dyDioJogAAGprGpCtVImJhpPk/roCzdb3fIh61/s/nPsfR6onyMwkCAR/OlC3yBC0lESvUoQEAssIrw==
@@ -3035,6 +3042,19 @@ msgpackr@^1.11.2:
   integrity sha512-F9UngXRlPyWCDEASDpTf6c9uNhGPTqnTeLVt7bN+bU1eajoR/8V9ys2BRaV5C/e5ihE6sJ9uPIKaYt6bFuO32g==
   optionalDependencies:
     msgpackr-extract "^3.0.2"
+
+multer@^1.4.5-lts.2:
+  version "1.4.5-lts.2"
+  resolved "https://registry.yarnpkg.com/multer/-/multer-1.4.5-lts.2.tgz#340af065d8685dda846ec9e3d7655fcd50afba2d"
+  integrity sha512-VzGiVigcG9zUAoCNU+xShztrlr1auZOlurXynNvO9GiWD1/mTBbUljOKY+qMeazBqXgRnjzeEgJI/wyjJUHg9A==
+  dependencies:
+    append-field "^1.0.0"
+    busboy "^1.0.0"
+    concat-stream "^1.5.2"
+    mkdirp "^0.5.4"
+    object-assign "^4.1.1"
+    type-is "^1.6.4"
+    xtend "^4.0.0"
 
 natural-compare@^1.4.0:
   version "1.4.0"

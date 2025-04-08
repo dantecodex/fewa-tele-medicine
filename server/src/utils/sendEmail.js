@@ -1,18 +1,19 @@
 import { createTransport } from "nodemailer"
 import logger from "./logger.js"
+import emailConfig from "../config/email.config.js"
 
 const sendEmail = async (options) => {
   const transporter = createTransport({
-    host: process.env.EMAIL_HOST,
-    port: process.env.EMAIL_PORT,
+    host: emailConfig.HOST,
+    port: emailConfig.PORT,
     auth: {
-      user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_PASS,
+      user: emailConfig.USER,
+      pass: emailConfig.PASSWORD,
     },
   })
 
   const emailOptions = {
-    from: `"Provider" ${process.env.EMAIL_FROM}`,
+    from: `"Provider" ${emailConfig.FROM}`,
     to: options.email,
     subject: options.subject,
     html: options.message,

@@ -11,6 +11,7 @@ import {
 } from "@mui/material";
 import "./Login.scss";
 import { navigate } from "wouter/use-browser-location";
+import { toast } from 'sonner'
 // import { useNavigate } from "react-router-dom";
 // import Link from "wouter";
 
@@ -53,33 +54,54 @@ const Login = () => {
   // };
 
 
-const handleSubmit = async (e) => {
-  e.preventDefault();
-  if (validate()) {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!validate()) return;
+  
     try {
       const response = await fetch(`${API_BASE_URL}/auth/login`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+        },
         body: JSON.stringify({
           identifier: form.providerUserName,
           password: form.providerPassword,
         }),
       });
-
+  
       const result = await response.json();
-      if (result.success) {
-        console.log("result", result);
-        localStorage.setItem("accessToken", result?.data?.accessToken);
-        localStorage.setItem("userName", JSON.stringify(form.providerUserName));
-        navigate("/provider/dashboard");
-      } else {
-        setErrors({ apiError: result.message || "Login failed. Please try again." });
+  
+      if (!response.ok || !result.success) {
+        throw new Error(result.message || "Login failed. Please try again.");
       }
+  
+      const { role, accessToken, } = result.data;
+      toast.success(result.message);
+       console.log("Login successful:", result);
+      // Store essentials
+      localStorage.setItem("role", role);
+      localStorage.setItem("accessToken", accessToken);
+      localStorage.setItem("userName", JSON.stringify(form.providerUserName));
+  
+      // Redirect based on role
+      switch (role) {
+        case "ADMIN":
+          navigate("/provider/dashboard");
+          break;
+        case "PATIENT":
+          navigate("/patient/intro");
+          break;
+        default:
+          throw new Error("Unauthorized role. Please contact support.");
+      }
+  
     } catch (error) {
-      setErrors({ apiError: "An error occurred. Please try again later." });
+      toast.error(error.message);
+      setErrors({ apiError: error.message });
     }
-  }
-};
+  };
+  
 
 
   return (

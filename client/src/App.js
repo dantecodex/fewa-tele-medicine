@@ -22,6 +22,7 @@ import LiveChat from "./provider/liveVideo/LiveVideo.tsx";
 import PatientIntro from "./patient/patientInto/PatientIntro.tsx";
 import LiveVideoChat from "./patient/liveVideoChat/LiveVideoChat.tsx";
 import Summary from "./patient/summary/Summary.tsx";
+import { Toaster } from 'sonner'
 // import LiveVideoChat from "./patient/liveVideoChat/LiveVideoChat.tsx";
 
 // Create a client
@@ -72,7 +73,7 @@ function Router() {
       </Route>
       <Route path="/provider/live_video">
         <IsAuthenticated>   <LiveChat /> </IsAuthenticated>
-
+       {/* //Patient route  */}
       </Route>
       <Route path="/patient/intro">
         <PatientIntro />
@@ -93,6 +94,7 @@ function App() {
     <BrowserRouter>
       <Router />
       {/* <Toaster /> */}
+      <Toaster richColors position="top-right" />
     </BrowserRouter>
   );
 }

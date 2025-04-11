@@ -16,6 +16,7 @@ import {
   MenuItem,
 } from "@mui/material";
 import { navigate } from "wouter/use-browser-location";
+import { toast } from 'sonner'
 
 const API_BASE_URL = "http://localhost:2000/api/v1";
 
@@ -86,12 +87,14 @@ const Registration = () => {
           localStorage.setItem("regData", JSON.stringify(data));
           setEmail(data.email);
           setToken(result.token);
-          setMessage("OTP has been sent to your email.");
+          // setMessage("OTP has been sent to your email.");
+          toast.success(result.message || "OTP has been sent to your email.");
           setCurrentSection("verifyOtpSection");
         } else {
           setMessage(result.message || "Signup failed.");
         }
       } catch (error) {
+        toast.error(error.message || "An error occurred. Please try again.");
         setMessage("An error occurred. Please try again.");
       }
     } else if (currentSection === "verifyOtpSection") {
@@ -111,14 +114,14 @@ const Registration = () => {
           //   setMessage("Invalid OTP. Please try again.");
           //   return;
           // }
-          setMessage(result.message || "OTP verified successfully.");
+          toast.success(result.message || "OTP verified successfully.");
           navigate("/provider/login");
           // setCurrentSection("showSetPasswordSection");
         } else {
           setMessage("Invalid OTP. Please try again.");
         }
       } catch (error) {
-        setMessage("An error occurred. Please try again.");
+        toast.error(error.message || "An error occurred. Please try again.");
       }
     } else if (currentSection === "showSetPasswordSection") {
       try {
@@ -146,11 +149,25 @@ const Registration = () => {
     }
   };
 
-  const resendOtp = () => {
-    const newOtp = Math.floor(1000 + Math.random() * 9000).toString();
-    setStoredOtp(newOtp);
-    console.log("New OTP (for testing):", newOtp);
-    setMessage("A new OTP has been sent to your email.");
+  const resendOtp = async () => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/auth/resend-verify-email`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+  
+      const result = await response.json();
+  
+      if (result.success) {
+        setMessage("A new OTP has been sent to your email.");
+        setMessage(result.message || "A new OTP has been sent to your email.");
+      } else {
+        setMessage(result.message || "Failed to resend OTP. Please try again.");
+      }
+    } catch (error) {
+      setMessage("An error occurred while resending OTP. Please try again.");
+    }
   };
 
   return (
@@ -204,8 +221,8 @@ const Registration = () => {
                       control={control}
                       render={({ field }) => (
                         <Select {...field} label="Role">
-                          <MenuItem value="Patient">Patient</MenuItem>
-                          <MenuItem value="Doctor">Doctor</MenuItem>
+                          <MenuItem value="PATIENT">Patient</MenuItem>
+                          <MenuItem value="ADMIN">Admin</MenuItem>
                         </Select>
                       )}
                     />

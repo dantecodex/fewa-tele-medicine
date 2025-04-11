@@ -11,6 +11,10 @@ import {
   Box,
   Container,
 } from "@mui/material";
+import { toast } from "sonner";
+import { IconButton, InputAdornment } from "@mui/material";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
+
 
 // Validation Schema
 const schema = yup.object().shape({
@@ -37,6 +41,11 @@ const ForgotPassword = () => {
   const [messages, setMessages] = useState({ otpSent: "", otpError: "", resetError: "" });
   const [email, setEmail] = useState("");
   const [resetPasswordToken, setResetPasswordToken] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const togglePasswordVisibility = () => setShowPassword((prev) => !prev);
+  const toggleConfirmPasswordVisibility = () => setShowConfirmPassword((prev) => !prev);
+
 
   const {
     register,
@@ -46,77 +55,81 @@ const ForgotPassword = () => {
 
 
 
-    // Function to send OTP
-    const sendOTP = async (data: any) => {
-      try {
-        const response = await fetch(`${API_BASE_URL}/auth/forgot-password`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email: data.email_username }),
-        });
-    
-        const result = await response.json();
-        console.log("OTP API Response:", result);
-    
-        if (result.success) {
-          setEmail(data.email_username);
-          setMessages(result?.message || "Your OTP has been sent to your email.");
-          setStep(2);
-        } else {
-          setMessages(prev => ({ ...prev, otpError: result.message || "Failed to send OTP" }));
-        }
-      } catch (error) {
-        console.error("OTP API Error:", error);
-        setMessages(prev => ({ ...prev, otpError: "An error occurred. Please try again." }));
-      }
-    };
-    
-  
-    // Function to verify OTP
-    const verifyOTP = async (data: any) => {
-      try {
-        const response = await fetch(`${API_BASE_URL}/auth/forgot-password?otp=${data.otp}`, {
-          method: "GET",
-          headers: { "Content-Type": "application/json" },
-          // body: JSON.stringify({ otp: data.otp }),
-        });
-  
-        const result = await response.json();
-        if (result.success) {
-          console.log("resetToken:", result);
-          setResetPasswordToken(result?.data?.resetPasswordToken);
-          setMessages(result?.message || "OTP verified successfully.");
-          setStep(3);
-        } else {
-          setMessages({ ...messages, otpError: result.message || "Invalid OTP" });
-        }
-      } catch (error) {
-        setMessages({ ...messages, otpError: "An error occurred. Please try again." });
-      }
-    };
-  
-    // Function to reset password
-    const resetPassword = async (data: any) => {
-      try {
-        const response = await fetch(`${API_BASE_URL}/auth/forgot-password`, {
-          method: "PATCH",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({password: data.password , resetPasswordToken: resetPasswordToken }),
-        });
-  
-        const result = await response.json();
-        if (result.success) {
-          setMessages(result.message);
-          setStep(1);
-        } else {
-          setMessages({ ...messages, resetError: result.message || "Failed to reset password" });
-        }
-      } catch (error) {
-        setMessages({ ...messages, resetError: "An error occurred. Please try again." });
-      }
-    };
+  // Function to send OTP
+  const sendOTP = async (data: any) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/auth/forgot-password`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: data.email_username }),
+      });
 
-    // Handle form submission
+      const result = await response.json();
+      console.log("OTP API Response:", result);
+
+      if (result.success) {
+        setEmail(data.email_username);
+        toast.success(result?.message || "OTP sent successfully");
+        setStep(2);
+      } else {
+        setMessages(prev => ({ ...prev, otpError: result.message || "Failed to send OTP" }));
+      }
+    } catch (error) {
+      toast.error(error?.message || "An error occurred. Please try again.");
+      console.error("OTP API Error:", error);
+    }
+  };
+
+
+  // Function to verify OTP
+  const verifyOTP = async (data: any) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/auth/forgot-password?otp=${data.otp}`, {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+        // body: JSON.stringify({ otp: data.otp }),
+      });
+
+      const result = await response.json();
+      console.log("Verify OTP API Response:", result);
+      if (result.success) {
+        console.log("resetToken:", result);
+        setResetPasswordToken(result?.data?.resetPasswordToken);
+        toast.success(result?.message || "OTP verified successfully");
+        setStep(3);
+      } else {
+        // setMessages({ ...messages, otpError: result.message || "Invalid OTP" });
+        toast.error(result?.message || "An error occurred. Please try again.");
+      }
+    } catch (error) {
+      toast.error(error?.message || "An error occurred. Please try again.");
+    }
+  };
+
+  // Function to reset password
+  const resetPassword = async (data: any) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/auth/forgot-password`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ password: data.password, resetPasswordToken: resetPasswordToken }),
+      });
+
+      const result = await response.json();
+      if (result.success) {
+        toast.success(result?.message || "Password reset successfully");
+        setMessages(result.message);
+        setStep(1);
+      } else {
+        setMessages({ ...messages, resetError: result.message || "Failed to reset password" });
+      }
+    } catch (error) {
+      toast.error(error?.message || "An error occurred. Please try again.");
+      setMessages({ ...messages, resetError: "An error occurred. Please try again." });
+    }
+  };
+
+  // Handle form submission
   const onSubmit = (data: any) => {
     if (step === 1) {
       sendOTP(data);
@@ -127,10 +140,30 @@ const ForgotPassword = () => {
     }
   };
 
+  const resendOtp = async () => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/auth/resend-verify-email`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: email }),
+      });
+  
+      const result = await response.json();
+  
+      if (result.success) {
+        toast.success(result?.message || "OTP resent successfully");
+      } else {
+        toast.error(result.message || "Failed to resend OTP");
+      }
+    } catch (error) {
+      toast.error(error?.message || "An error occurred while resending OTP.");
+    }
+  };
+  
   return (
     <Container maxWidth="lg">
       <Grid container justifyContent="center" alignItems="center" style={{ minHeight: "100vh" }}>
-        
+
         {/* Left Side - Forgot Password Form */}
         <Grid item xs={12} md={6}>
           <Paper elevation={3} sx={{ padding: 4 }}>
@@ -192,7 +225,7 @@ const ForgotPassword = () => {
                     </Grid>
 
                     <Grid item xs={12}>
-                      <Button variant="outlined" color="secondary" fullWidth>
+                      <Button variant="outlined" color="secondary" fullWidth onClick={resendOtp}>
                         Resend OTP
                       </Button>
                     </Grid>
@@ -205,22 +238,40 @@ const ForgotPassword = () => {
                     <Grid item xs={12}>
                       <TextField
                         fullWidth
-                        type="password"
+                        type={showPassword ? "text" : "password"}
                         label="Enter your new password"
                         {...register("password")}
                         error={!!errors.password}
                         helperText={errors.password?.message}
+                        InputProps={{
+                          endAdornment: (
+                            <InputAdornment position="end">
+                              <IconButton onClick={togglePasswordVisibility} edge="end">
+                                {showPassword ? <VisibilityOff /> : <Visibility />}
+                              </IconButton>
+                            </InputAdornment>
+                          ),
+                        }}
                       />
                     </Grid>
 
                     <Grid item xs={12}>
                       <TextField
                         fullWidth
-                        type="password"
+                        type={showConfirmPassword ? "text" : "password"}
                         label="Confirm your password"
                         {...register("confirm_password")}
                         error={!!errors.confirm_password}
                         helperText={errors.confirm_password?.message}
+                        InputProps={{
+                          endAdornment: (
+                            <InputAdornment position="end">
+                              <IconButton onClick={toggleConfirmPasswordVisibility} edge="end">
+                                {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
+                              </IconButton>
+                            </InputAdornment>
+                          ),
+                        }}
                       />
                     </Grid>
 
@@ -231,6 +282,7 @@ const ForgotPassword = () => {
                     </Grid>
                   </>
                 )}
+
 
                 {/* Back to Login */}
                 <Grid item xs={12} textAlign="center">

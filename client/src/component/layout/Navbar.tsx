@@ -16,6 +16,7 @@ export function Navbar() {
   // });
 
   const providerObj = { nameTitle: "Dr.", name: "John Doe", image: "" };
+  const providerUserName = localStorage.getItem("userName");
    const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
       setAnchorEl(event.currentTarget);
     };
@@ -44,7 +45,7 @@ export function Navbar() {
               <Button variant="outlined" onClick={() => {}}>Logout</Button> */}
               <div>
             <Button onClick={handleMenuOpen} startIcon={<Avatar src={providerObj.image || "/assets/img/profilePic.jpg"} />}>
-              {providerObj.nameTitle} {providerObj.name}
+              {providerObj.nameTitle} {JSON.parse(providerUserName)}
             </Button>
             <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleMenuClose}>
               <MenuItem onClick={handleMenuClose}>Logout</MenuItem>

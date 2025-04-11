@@ -18,6 +18,7 @@ import {
   Avatar,
   InputAdornment,
   IconButton,
+  Snackbar
 } from "@mui/material";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
@@ -39,6 +40,16 @@ const Dashboard = () => {
     { date: "March 11, 2025", startTime: "11:00 AM", endTime: "11:20 AM", duration: "20 min" },
   ]);
 
+  const [open, setOpen] = useState(false);
+  
+  const invitationLink = "https://yourapp.com/invite?code=123456"; // Replace with dynamic link
+
+  const copyToClipboard = () => {
+    navigator.clipboard.writeText(invitationLink)
+      .then(() => setOpen(true)) // Show success message
+      .catch(err => console.error("Failed to copy: ", err));
+  };
+
   const providerObj = { nameTitle: "Dr.", name: "John Doe", image: "" };
 
   const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
@@ -49,6 +60,7 @@ const Dashboard = () => {
   };
 
   const sendInvitation = () => {
+    alert("Invitation sent to patient successfully!");
     console.log("Sending invitation to", email || phone);
   };
 
@@ -95,7 +107,24 @@ const Dashboard = () => {
       <Grid item xs={14} md={10}>
         <Card>
           <CardContent>
-            <Typography variant="h6" gutterBottom>Click Here To Copy Invitation Link</Typography>
+            {/* <Typography variant="h6" gutterBottom>Click Here To Copy Invitation Link</Typography> */}
+              <Typography
+                variant="h6"
+                gutterBottom
+                onClick={copyToClipboard}
+                style={{ cursor: "pointer", color: "blue", textDecoration: "underline" }}
+              >
+                Click Here To Copy Invitation Link
+              </Typography>
+
+              {/* Snackbar for confirmation */}
+              <Snackbar
+                open={open}
+                autoHideDuration={2000}
+                onClose={() => setOpen(false)}
+                message="Invitation link copied!"
+                anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+              />
             <Grid container spacing={2} alignItems="center">
               <Grid item xs={4}>
                 <TextField label="Email address" fullWidth value={email} onChange={(e) => setEmail(e.target.value)} />

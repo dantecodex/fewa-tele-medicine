@@ -83,6 +83,7 @@ const VideoConference: React.FC = () => {
   };
 
   const startMeet = () => {
+    alert("Meeting started");
     setIsMeetStart(true);
   };
 
@@ -161,14 +162,14 @@ const VideoConference: React.FC = () => {
             }}
             onAPILoad={(JitsiMeetAPI) => console.log("Jitsi Meet API loaded")}
           /> */}
-          {isMeetStart && (
- <iframe
-      src="https://meet.jit.si/FewaTelemedicine"
-      allow="camera; microphone; fullscreen; display-capture"
-      style={{ width: "100%", height: "600px", border: "none" }}
-    ></iframe>
-    
-)}
+            {isMeetStart && (
+              <iframe
+                src="https://meet.jit.si/FewaTelemedicine"
+                allow="camera; microphone; fullscreen; display-capture"
+                style={{ width: "100%", height: "600px", border: "none" }}
+              ></iframe>
+
+            )}
 
         </Box>
       )}

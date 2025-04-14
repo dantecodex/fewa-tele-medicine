@@ -9,7 +9,7 @@ import sendEmail from "../utils/sendEmail.js"
 
 const JWT_CONFIG = {
   algorithm: "HS256",
-  expiresIn: process.env.JWT_EXPIRES_IN || "1h",
+  expiresIn: process.env.JWT_EXPIRES_IN || "24h",
   issuer: process.env.JWT_ISSUER || "our-app-name",
 }
 const ARGON_CONFIG = {

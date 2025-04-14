@@ -42,4 +42,5 @@ enum Title {
   MR
   MRS
   MISS
+  OTHER
 }

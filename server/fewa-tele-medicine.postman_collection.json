@@ -1,180 +1,395 @@
 {
-  "info": {
-    "_postman_id": "71ca0562-aa1a-4794-ab4b-436a64e2efb6",
-    "name": "fewa-tele-medicine",
-    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-    "_exporter_id": "41182395"
-  },
-  "item": [
-    {
-      "name": "Signup",
-      "request": {
-        "method": "POST",
-        "header": [],
-        "body": {
-          "mode": "raw",
-          "raw": "{\n    \"first\": \"saurbh\",\n    \"last\": \"jain\",\n    \"email\": \"saurbh3212@gmail.com\",\n    \"phone\": \"987654325021\",\n    \"username\": \"saurbh1245\",\n    \"password\": \"password\",\n    \"role\": \"PATIENT\"\n}",
-          "options": {
-            "raw": {
-              "language": "json"
-            }
-          }
-        },
-        "url": {
-          "raw": "localhost:2000/api/v1/auth/signup",
-          "host": ["localhost"],
-          "port": "2000",
-          "path": ["api", "v1", "auth", "signup"]
-        }
-      },
-      "response": []
-    },
-    {
-      "name": "Verify Email",
-      "request": {
-        "method": "POST",
-        "header": [],
-        "body": {
-          "mode": "raw",
-          "raw": "{\n    \"otp\": \"173555\"\n}",
-          "options": {
-            "raw": {
-              "language": "json"
-            }
-          }
-        },
-        "url": {
-          "raw": "localhost:2000/api/v1/auth/verify-email",
-          "host": ["localhost"],
-          "port": "2000",
-          "path": ["api", "v1", "auth", "verify-email"]
-        }
-      },
-      "response": []
-    },
-    {
-      "name": "Resend email verification otp",
-      "request": {
-        "method": "POST",
-        "header": [],
-        "body": {
-          "mode": "raw",
-          "raw": "{\n    \"email\": \"saurbh2212@gmail.com\"\n}",
-          "options": {
-            "raw": {
-              "language": "json"
-            }
-          }
-        },
-        "url": {
-          "raw": "localhost:2000/api/v1/auth/resend-verify-email",
-          "host": ["localhost"],
-          "port": "2000",
-          "path": ["api", "v1", "auth", "resend-verify-email"]
-        }
-      },
-      "response": []
-    },
-    {
-      "name": "Login",
-      "request": {
-        "method": "POST",
-        "header": [],
-        "body": {
-          "mode": "raw",
-          "raw": "{\n    \"identifier\": \"saurbh124\",\n    \"password\": \"password1\"\n}",
-          "options": {
-            "raw": {
-              "language": "json"
-            }
-          }
-        },
-        "url": {
-          "raw": "localhost:2000/api/v1/auth/login",
-          "host": ["localhost"],
-          "port": "2000",
-          "path": ["api", "v1", "auth", "login"]
-        }
-      },
-      "response": []
-    },
-    {
-      "name": "Send forget password otp",
-      "request": {
-        "method": "POST",
-        "header": [],
-        "body": {
-          "mode": "raw",
-          "raw": "{\n    \"email\": \"saurbh2212@gmail.com\"\n}",
-          "options": {
-            "raw": {
-              "language": "json"
-            }
-          }
-        },
-        "url": {
-          "raw": "localhost:2000/api/v1/auth/forgot-password",
-          "host": ["localhost"],
-          "port": "2000",
-          "path": ["api", "v1", "auth", "forgot-password"]
-        }
-      },
-      "response": []
-    },
-    {
-      "name": "Verify forgot password otp",
-      "protocolProfileBehavior": {
-        "disableBodyPruning": true
-      },
-      "request": {
-        "method": "GET",
-        "header": [],
-        "body": {
-          "mode": "raw",
-          "raw": "",
-          "options": {
-            "raw": {
-              "language": "json"
-            }
-          }
-        },
-        "url": {
-          "raw": "localhost:2000/api/v1/auth/forgot-password?otp=120933",
-          "host": ["localhost"],
-          "port": "2000",
-          "path": ["api", "v1", "auth", "forgot-password"],
-          "query": [
-            {
-              "key": "otp",
-              "value": "120933"
-            }
-          ]
-        }
-      },
-      "response": []
-    },
-    {
-      "name": "Forget password with token",
-      "request": {
-        "method": "PATCH",
-        "header": [],
-        "body": {
-          "mode": "raw",
-          "raw": "{\r\n    \"password\": \"password1\",\r\n    \"resetPasswordToken\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InNhdXJiaDIyMTJAZ21haWwuY29tIiwiaWF0IjoxNzQzNTAxOTU2LCJleHAiOjE3NDM1MDI1NTZ9.vnufUTE2CnQWEjCdLvtVeBZ5FUtQ2fOqqwkTL4wKSQM\"\r\n}",
-          "options": {
-            "raw": {
-              "language": "json"
-            }
-          }
-        },
-        "url": {
-          "raw": "localhost:2000/api/v1/auth/forgot-password",
-          "host": ["localhost"],
-          "port": "2000",
-          "path": ["api", "v1", "auth", "forgot-password"]
-        }
-      },
-      "response": []
-    }
-  ]
+	"info": {
+		"_postman_id": "71ca0562-aa1a-4794-ab4b-436a64e2efb6",
+		"name": "fewa-tele-medicine",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "41182395"
+	},
+	"item": [
+		{
+			"name": "Authentication",
+			"item": [
+				{
+					"name": "Signup",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"first\": \"saurbh\",\n    \"last\": \"jain\",\n    \"email\": \"saurbh3212@gmail.com\",\n    \"phone\": \"987654325021\",\n    \"username\": \"saurbh1245\",\n    \"password\": \"password\",\n    \"role\": \"ADMIN\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:2000/api/v1/auth/signup",
+							"host": [
+								"localhost"
+							],
+							"port": "2000",
+							"path": [
+								"api",
+								"v1",
+								"auth",
+								"signup"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Verify Email",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"otp\": \"719974\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:2000/api/v1/auth/verify-email",
+							"host": [
+								"localhost"
+							],
+							"port": "2000",
+							"path": [
+								"api",
+								"v1",
+								"auth",
+								"verify-email"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Resend email verification otp",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"saurbh2212@gmail.com\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:2000/api/v1/auth/resend-verify-email",
+							"host": [
+								"localhost"
+							],
+							"port": "2000",
+							"path": [
+								"api",
+								"v1",
+								"auth",
+								"resend-verify-email"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Handle accessToken based on login response\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    if (jsonData.success === true) {",
+									"        pm.collectionVariables.set(\"accessToken\", jsonData.data.accessToken);",
+									"    } else {",
+									"        pm.collectionVariables.unset(\"accessToken\");",
+									"    }",
+									"});",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"identifier\": \"saurbh1245\",\n    \"password\": \"password\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:2000/api/v1/auth/login",
+							"host": [
+								"localhost"
+							],
+							"port": "2000",
+							"path": [
+								"api",
+								"v1",
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Send forget password otp",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"saurbh2212@gmail.com\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:2000/api/v1/auth/forgot-password",
+							"host": [
+								"localhost"
+							],
+							"port": "2000",
+							"path": [
+								"api",
+								"v1",
+								"auth",
+								"forgot-password"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Verify forgot password otp",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:2000/api/v1/auth/forgot-password?otp=120933",
+							"host": [
+								"localhost"
+							],
+							"port": "2000",
+							"path": [
+								"api",
+								"v1",
+								"auth",
+								"forgot-password"
+							],
+							"query": [
+								{
+									"key": "otp",
+									"value": "120933"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Forget password with token",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"password\": \"password1\",\r\n    \"resetPasswordToken\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InNhdXJiaDIyMTJAZ21haWwuY29tIiwiaWF0IjoxNzQzNTAxOTU2LCJleHAiOjE3NDM1MDI1NTZ9.vnufUTE2CnQWEjCdLvtVeBZ5FUtQ2fOqqwkTL4wKSQM\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:2000/api/v1/auth/forgot-password",
+							"host": [
+								"localhost"
+							],
+							"port": "2000",
+							"path": [
+								"api",
+								"v1",
+								"auth",
+								"forgot-password"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "User",
+			"item": [
+				{
+					"name": "Update profile",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "first",
+									"value": "Anshul",
+									"type": "text"
+								},
+								{
+									"key": "last",
+									"value": "Rajput",
+									"type": "text"
+								},
+								{
+									"key": "email",
+									"value": "anshulrajput237@gmail.com",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "title",
+									"value": "MR",
+									"type": "text"
+								},
+								{
+									"key": "avatar",
+									"type": "file",
+									"src": "/home/tw/Downloads/dante-dmc-wallpaper.jpg"
+								},
+								{
+									"key": "degree",
+									"value": "danger",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "localhost:2000/api/v1/user/profile",
+							"host": [
+								"localhost"
+							],
+							"port": "2000",
+							"path": [
+								"api",
+								"v1",
+								"user",
+								"profile"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "zoom",
+			"item": [
+				{
+					"name": "create meeting",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "localhost:2000/api/v1/zoom/create-meeting",
+							"host": [
+								"localhost"
+							],
+							"port": "2000",
+							"path": [
+								"api",
+								"v1",
+								"zoom",
+								"create-meeting"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "accessToken",
+			"value": ""
+		}
+	]
 }

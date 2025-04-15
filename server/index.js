@@ -13,7 +13,7 @@ import requestId from "./src/middleware/requestId.js"
 import rateLimiter from "./src/utils/rateLimiter.js"
 
 // Starting workers
-import './src/jobs/index.worker.js'
+import "./src/jobs/index.worker.js"
 
 const requiredEnvVars = [
   "NODE_ENV",
@@ -51,7 +51,7 @@ app.use(
 )
 
 app.use(rateLimiter(1000, "1h"))
-app.use(morgan('dev'))
+app.use(morgan("dev"))
 app.use(requestId)
 
 app.use(compression())
@@ -59,7 +59,6 @@ app.use(compression())
 app.use(express.json({ limit: "10kb" }))
 app.use(express.urlencoded({ extended: true }))
 app.use(express.static("public"))
-
 
 const corsOptions = {
   origin: process.env.CORS_ORIGINS?.split(",") || "*",

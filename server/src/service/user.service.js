@@ -40,8 +40,8 @@ const updateProfile = async (validatedData, userID) => {
       email: true,
       title: true,
       designation: true,
-      degree: true
-    }
+      degree: true,
+    },
   })
 
   return updatedUser

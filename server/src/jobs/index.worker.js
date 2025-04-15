@@ -1,1 +1,1 @@
-import './workers/email.worker.js'
+import "./workers/email.worker.js"

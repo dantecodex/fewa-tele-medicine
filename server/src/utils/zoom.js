@@ -1,4 +1,4 @@
-import redis from "../config/redis.config.js"
+import redis from "./redis.js";
 import zoomConfig from "../config/zoom.config.js";
 import CustomError from "./customErrorHandler.js";
 

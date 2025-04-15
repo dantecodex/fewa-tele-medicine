@@ -12,6 +12,9 @@ import globalErrorHandler from "./src/utils/globalErrorHandler.js"
 import requestId from "./src/middleware/requestId.js"
 import rateLimiter from "./src/utils/rateLimiter.js"
 
+// Starting workers
+import './src/jobs/index.worker.js'
+
 const requiredEnvVars = [
   "NODE_ENV",
   "CORS_ORIGINS",

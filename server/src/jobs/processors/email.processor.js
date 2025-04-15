@@ -1,6 +1,7 @@
 import { createTransport } from "nodemailer"
-import logger from "./logger.js"
-import emailConfig from "../config/email.config.js"
+import logger from "../../utils/logger.js"
+import emailConfig from "../../config/email.config.js"
+
 
 const sendEmail = async (options) => {
     const transporter = createTransport({

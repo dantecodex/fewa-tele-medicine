@@ -6,6 +6,7 @@ import prisma from "../../prisma/client/prismaClient.js"
 import CustomError from "../utils/customErrorHandler.js"
 import logger from "../utils/logger.js"
 import sendEmail from "../utils/sendEmail.js"
+import emailQueue from "../jobs/queues/email.queue.js"
 
 const JWT_CONFIG = {
   algorithm: "HS256",
@@ -41,7 +42,8 @@ const signup = async (validatedData) => {
     subject: "Verify Email address",
     message: `Email Verification OTP: ${newUser.otp}`,
   }
-  await sendEmail(sendOtpEmailOptions)
+  // await sendEmail(sendOtpEmailOptions)
+  await emailQueue.add('sendEmail', sendOtpEmailOptions)
   logger.info(`User created: ${newUser.email}`)
 
   return {
@@ -158,8 +160,9 @@ const resendVerifyEmailOTP = async ({ email }) => {
     subject: "Verify Email address",
     message: `Email Verification OTP: ${newOTP}`,
   }
-  await sendEmail(sendOtpEmailOptions)
-  logger.info(`Resent email verification otp`)
+  // await sendEmail(sendOtpEmailOptions)
+  await emailQueue.add('sendEmail', sendOtpEmailOptions)
+  logger.info(`Resent email verification otp for ${user.email}`)
   return {
     otpResent: true,
   }
@@ -195,7 +198,9 @@ const sendForgotPasswordOTP = async ({ email }) => {
     subject: "Password reset link",
     message: `Password reset OTP: ${[passwordResetOTP]}`,
   }
-  await sendEmail(sendPasswordResetOTPOptions)
+  // await sendEmail(sendPasswordResetOTPOptions)
+  await emailQueue.add('sendEmail', sendPasswordResetOTPOptions)
+  logger.info(`Password reset otp sent to ${user.email}`)
 }
 
 const verifyForgotPasswordOTP = async ({ otp }) => {

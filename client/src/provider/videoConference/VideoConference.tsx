@@ -33,10 +33,10 @@ const global = {
 };
 
 const NotificationService = {
-  EventCompletePatient: { subscribe: (callback: (patient: Patient) => void) => {} },
-  EventGetAllProviders: { subscribe: (callback: (providers: any) => void) => {} },
-  EventCallPatient: { subscribe: (callback: (patient: Patient) => void) => {} },
-  EventChatMessage: { subscribe: (callback: (chatData: any) => void) => {} },
+  EventCompletePatient: { subscribe: (callback: (patient: Patient) => void) => { } },
+  EventGetAllProviders: { subscribe: (callback: (providers: any) => void) => { } },
+  EventCallPatient: { subscribe: (callback: (patient: Patient) => void) => { } },
+  EventChatMessage: { subscribe: (callback: (chatData: any) => void) => { } },
   LoadActiveDoctors: () => console.log("Loading active doctors..."),
   Connect: () => console.log("Connecting..."),
   CallEnds: (patient: Patient) => console.log("Call ended for", patient),
@@ -50,6 +50,8 @@ const VideoConference: React.FC = () => {
   const [patientObj, setPatientObj] = useState<Patient>(global.patientObj);
   const [providerObj, setProviderObj] = useState<Provider>(global.providerObj);
   const chatContainerRef = useRef<HTMLDivElement | null>(null);
+  const [zoomMeetingUrl, setZoomMeetingUrl] = useState<string | null>(null);
+
 
   const roomName: string = providerObj.roomName;
   const remoteUserDisplayName: string = patientObj.name;
@@ -65,7 +67,7 @@ const VideoConference: React.FC = () => {
         patientCompleted(_patient);
       });
 
-      NotificationService.EventGetAllProviders.subscribe((_providers: any) => {});
+      NotificationService.EventGetAllProviders.subscribe((_providers: any) => { });
 
       NotificationService.LoadActiveDoctors();
     } else {
@@ -82,10 +84,64 @@ const VideoConference: React.FC = () => {
     }
   };
 
-  const startMeet = () => {
-    alert("Meeting started");
-    setIsMeetStart(true);
+  // const startMeet = () => {
+  //   alert("Meeting started");
+  //   setIsMeetStart(true);
+  // };
+
+
+  const startMeet = async () => {
+    const token = localStorage.getItem("accessToken");
+    try {
+      const response = await fetch("http://localhost:2000/api/v1/zoom/create-meeting", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          // topic: "Fewa Telemedicine Call",
+          // userRole: global.isPatient ? "patient" : "provider",
+        }),
+      });
+
+      const result = await response.json();
+      if (result.success && result.data) {
+        setZoomMeetingUrl(result.data);
+        setIsMeetStart(true);
+      } else {
+        alert("Failed to create Zoom meeting.");
+        console.error("Zoom API Error:", result.message);
+      }
+    } catch (error) {
+      console.error("Zoom API Fetch Error:", error);
+      alert("An error occurred while starting the meeting.");
+    }
   };
+  
+  // const patientCompleted = (patient: Patient) => {
+  //   if (!patient) return;
+
+  //   setIsMeetStart(false);
+  //   patient.url = providerObj.url;
+  //   patient.endTime = new Date();
+  //   global.patientObj = patient;
+  //   NotificationService.CallEnds(patient);
+  // };
+  // const handleJoinZoomMeeting = () => {
+  //   if (zoomMeetingUrl) {
+  //     window.open(zoomMeetingUrl, "_blank");
+  //   } else {
+  //     alert("No Zoom meeting URL available.");
+  //   }
+  // };
+  // const handleLeaveZoomMeeting = () => {
+  //   if (zoomMeetingUrl) {
+  //     window.close();
+  //   } else {
+  //     alert("No Zoom meeting URL available.");
+  //   }
+  // };  
 
   const endMeet = () => {
     if (!patientObj) return;
@@ -133,27 +189,27 @@ const VideoConference: React.FC = () => {
 
   return (
     <MainLayout>
-    <Box sx={{ p: 3 }}>
-      <Typography variant="h4">Video Conference</Typography>
+      <Box sx={{ p: 3 }}>
+        <Typography variant="h4">Video Conference</Typography>
 
-      <Paper elevation={3} sx={{ p: 2, my: 2 }}>
-        <Typography variant="h6">Room: {roomName}</Typography>
-        <Typography variant="subtitle1">User: {remoteUserDisplayName}</Typography>
+        <Paper elevation={3} sx={{ p: 2, my: 2 }}>
+          <Typography variant="h6">Room: {roomName}</Typography>
+          <Typography variant="subtitle1">User: {remoteUserDisplayName}</Typography>
 
-        {!isMeetStart ? (
-          <Button variant="contained" color="primary" onClick={startMeet} sx={{ mt: 2 }}>
-            Start Video Call
-          </Button>
-        ) : (
-          <Button variant="contained" color="error" onClick={endMeet} sx={{ mt: 2 }}>
-            End Meeting
-          </Button>
-        )}
-      </Paper>
+          {!isMeetStart ? (
+            <Button variant="contained" color="primary" onClick={startMeet} sx={{ mt: 2 }}>
+              Start Video Call
+            </Button>
+          ) : (
+            <Button variant="contained" color="error" onClick={endMeet} sx={{ mt: 2 }}>
+              End Meeting
+            </Button>
+          )}
+        </Paper>
 
-      {isMeetStart && (
-        <Box sx={{ width: "100%", height: "600px", mt: 2 }}>
-          {/* <Jitsi
+        {isMeetStart && (
+          <Box sx={{ width: "100%", height: "600px", mt: 2 }}>
+            {/* <Jitsi
             roomName={roomName}
             displayName={remoteUserDisplayName}
             config={{
@@ -162,53 +218,21 @@ const VideoConference: React.FC = () => {
             }}
             onAPILoad={(JitsiMeetAPI) => console.log("Jitsi Meet API loaded")}
           /> */}
-            {isMeetStart && (
-              <iframe
-                src="https://meet.jit.si/FewaTelemedicine"
-                allow="camera; microphone; fullscreen; display-capture"
-                style={{ width: "100%", height: "600px", border: "none" }}
-              ></iframe>
-
+            {isMeetStart && zoomMeetingUrl && (
+              <Box sx={{ width: "100%", height: "600px", mt: 2 }}>
+                <iframe
+                  src={zoomMeetingUrl}
+                  allow="camera; microphone; fullscreen"
+                  style={{ width: "100%", height: "100%", border: "none" }}
+                  title="Zoom Meeting"
+                />
+              </Box>
             )}
 
-        </Box>
-      )}
 
-      {/* <Box sx={{ mt: 3 }}>
-        <Typography variant="h6">Chat</Typography>
-        <Box
-          sx={{
-            height: 300,
-            overflowY: "auto",
-            border: "1px solid #ccc",
-            borderRadius: 1,
-            p: 2,
-          }}
-          ref={chatContainerRef}
-        >
-          {currentChat.map((msg, index) => (
-            <Box key={index} sx={{ mb: 1 }}>
-              <Typography variant="body2">
-                <strong>{msg.sender}:</strong> {msg.message}
-              </Typography>
-            </Box>
-          ))}
-        </Box>
-
-        <TextField
-          fullWidth
-          variant="outlined"
-          label="Type a message"
-          value={chatMessage}
-          onChange={handleChatChange}
-          onKeyDown={handleChatKeyDown}
-          sx={{ mt: 2 }}
-        />
-        <Button variant="contained" onClick={sendChatMsg} sx={{ mt: 1 }}>
-          Send
-        </Button>
-      </Box> */}
-    </Box>
+          </Box>
+        )}
+      </Box>
     </MainLayout>
   );
 };

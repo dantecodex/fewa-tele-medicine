@@ -209,11 +209,11 @@ const UserSettings: React.FC = () => {
                       control={profileControl}
                       render={({ field }) => (
                         <Select {...field}>
-                          <MenuItem value="Dr.">Dr.</MenuItem>
-                          <MenuItem value="Mr.">Mr.</MenuItem>
-                          <MenuItem value="Mrs.">Mrs.</MenuItem>
-                          <MenuItem value="Miss.">Miss.</MenuItem>
-                          <MenuItem value="Ms.">Ms.</MenuItem>
+                          <MenuItem value='DR'>Dr</MenuItem>
+                          <MenuItem value="Mr">Mr</MenuItem>
+                          <MenuItem value="Mrs">Mrs</MenuItem>
+                          <MenuItem value="Miss">Miss</MenuItem>
+                          <MenuItem value="Ms">Ms</MenuItem>
                           <MenuItem value="Other">Other</MenuItem>
                         </Select>
                       )}

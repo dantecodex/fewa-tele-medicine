@@ -68,10 +68,16 @@ const Dashboard = () => {
     console.log("Chat button clicked");   
     navigate("/provider/chat");
   }
-  const openVideo=()=>{
-    console.log("Video button clicked");
-    navigate("/provider/video_conference");
-  }
+  // const openVideo=()=>{
+  //   console.log("Video button clicked");
+  //   navigate("/provider/video_conference");
+  // }
+
+  const handleStartMeeting = () => {
+    const sessionName = 'telehealth-session-001';
+    const userName = 'doctor';
+    navigate("/provider/video_conference/");
+  };
 
   return (
     <MainLayout>
@@ -202,7 +208,7 @@ const Dashboard = () => {
                       <TableCell>{patient.name}</TableCell>
                       <TableCell>
                         {/* {patient.status === 0 && ( */}
-                          <Button variant="contained" color="primary" onClick={openVideo}>Call</Button>
+                          <Button variant="contained" color="primary" onClick={handleStartMeeting}>Call</Button>
                         {/* )} */}
                       </TableCell>
                       <TableCell>

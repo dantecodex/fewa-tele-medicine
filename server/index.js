@@ -9,7 +9,7 @@ import morgan from "morgan"
 import logger from "./src/utils/logger.js"
 import apiRouter from "./src/api/mainRouter.js"
 import globalErrorHandler from "./src/utils/globalErrorHandler.js"
-import requestId from "./src/middleware/requestId.js"
+import requestId from "./src/middleware/requestId.middleware.js"
 import rateLimiter from "./src/utils/rateLimiter.js"
 
 // Starting workers

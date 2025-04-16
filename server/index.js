@@ -97,6 +97,7 @@ app.use(globalErrorHandler)
 const PORT = process.env.PORT || 2000
 const server = app.listen(PORT, () => {
   logger.info(`Server running in ${process.env.NODE_ENV} mode on port ${PORT}`)
+  console.log(`Server running in ${process.env.NODE_ENV} mode on port ${PORT}`)
 })
 
 const shutdown = (signal) => {

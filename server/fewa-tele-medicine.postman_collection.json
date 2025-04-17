@@ -16,7 +16,7 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\n    \"first\": \"saurbh\",\n    \"last\": \"jain\",\n    \"email\": \"saurbh3212@gmail.com\",\n    \"phone\": \"987654325021\",\n    \"username\": \"saurbh1245\",\n    \"password\": \"password\",\n    \"role\": \"ADMIN\"\n}",
+              "raw": "{\n    \"first\": \"saurbh\",\n    \"last\": \"jain\",\n    \"email\": \"saurbh23@gmail.com\",\n    \"phone\": \"98765431505\",\n    \"username\": \"saur1h124\",\n    \"password\": \"password\",\n    \"role\": \"DOCTOR\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -105,7 +105,7 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\n    \"identifier\": \"saurbh1245\",\n    \"password\": \"password\"\n}",
+              "raw": "{\n    \"identifier\": \"saur1h124\",\n    \"password\": \"password\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -289,11 +289,58 @@
             },
             "method": "POST",
             "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
             "url": {
               "raw": "localhost:2000/api/v1/zoom/create-meeting",
               "host": ["localhost"],
               "port": "2000",
               "path": ["api", "v1", "zoom", "create-meeting"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Doctor",
+      "item": [
+        {
+          "name": "Schedule time slot",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "[\n  {\n    \"weekday\": \"MONDAY\",\n    \"startTime\": \"2025-04-21T09:00:00.000Z\",\n    \"endTime\": \"2025-04-21T10:00:00.000Z\",\n    \"mode\": \"ONLINE\"\n  },\n  {\n    \"weekday\": \"TUESDAY\",\n    \"startTime\": \"2025-04-22T11:00:00.000Z\",\n    \"endTime\": \"2025-04-22T12:00:00.000Z\",\n    \"mode\": \"OFFLINE\"\n  },\n  {\n    \"weekday\": \"WEDNESDAY\",\n    \"startTime\": \"2025-04-23T14:00:00.000Z\",\n    \"endTime\": \"2025-04-23T15:00:00.000Z\",\n    \"mode\": \"ONLINE\"\n  },\n  {\n    \"weekday\": \"THURSDAY\",\n    \"startTime\": \"2025-04-24T16:00:00.000Z\",\n    \"endTime\": \"2025-04-24T17:00:00.000Z\",\n    \"mode\": \"OFFLINE\"\n  },\n  {\n    \"weekday\": \"FRIDAY\",\n    \"startTime\": \"2025-04-25T08:00:00.000Z\",\n    \"endTime\": \"2025-04-25T09:00:00.000Z\",\n    \"mode\": \"ONLINE\"\n  }\n]\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "localhost:2000/api/v1/doctor/time-slot",
+              "host": ["localhost"],
+              "port": "2000",
+              "path": ["api", "v1", "doctor", "time-slot"]
             }
           },
           "response": []

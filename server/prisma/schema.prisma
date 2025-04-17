@@ -8,28 +8,42 @@ datasource db {
 }
 
 model User {
-  id                            Int       @id @default(autoincrement())
+  id                            Int        @id @default(autoincrement())
   title                         Title?
   designation                   String?
   first                         String
   last                          String
-  phone                         String    @unique
-  username                      String    @unique
-  email                         String    @unique
+  phone                         String     @unique
+  username                      String     @unique
+  email                         String     @unique
   password                      String
-  otp                           String?   @unique
+  otp                           String?    @unique
   otp_expires_at                DateTime?
-  created_at                    DateTime  @default(now())
-  updated_at                    DateTime  @updatedAt
+  created_at                    DateTime   @default(now())
+  updated_at                    DateTime   @updatedAt
   deleted_at                    DateTime?
   last_login                    DateTime?
   degree                        String?
-  is_active                     Boolean   @default(true)
-  is_verified                   Boolean   @default(false)
-  password_changed_at           DateTime  @default(now())
-  password_reset_otp            String?   @unique
+  is_active                     Boolean    @default(true)
+  is_verified                   Boolean    @default(false)
+  password_changed_at           DateTime   @default(now())
+  password_reset_otp            String?    @unique
   password_reset_otp_expires_at DateTime?
   role                          Role
+  Timeslot                      Timeslot[]
+}
+
+model Timeslot {
+  id         Int              @id @default(autoincrement())
+  doctor_id  Int
+  weekday    Weekday
+  start_time DateTime
+  end_time   DateTime
+  mode       ConsultationMode
+  created_at DateTime         @default(now())
+  doctor     User             @relation(fields: [doctor_id], references: [id])
+
+  @@unique([doctor_id, weekday, start_time, end_time], name: "unique_doctor_slot")
 }
 
 enum Role {
@@ -43,4 +57,19 @@ enum Title {
   MRS
   MISS
   OTHER
+}
+
+enum Weekday {
+  SUNDAY
+  MONDAY
+  TUESDAY
+  WEDNESDAY
+  THURSDAY
+  FRIDAY
+  SATURDAY
+}
+
+enum ConsultationMode {
+  ONLINE
+  OFFLINE
 }

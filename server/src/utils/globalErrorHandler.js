@@ -44,6 +44,8 @@ const parseValidationError = (message) => {
 }
 
 const handlePrismaError = (error) => {
+  // console.log(error);
+
   if (error instanceof Prisma.PrismaClientKnownRequestError) {
     const statusCode = PRISMA_ERROR_MAP[error.code] || 500
     const errorMeta = error.meta || {}

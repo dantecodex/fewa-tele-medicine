@@ -3,7 +3,16 @@ import CustomError from "./customErrorHandler.js"
 
 class ValidationHelper {
   constructor(validationSchema) {
-    this.schema = Joi.object(validationSchema)
+    // If it's already a Joi schema (object or array), use as-is
+    if (Joi.isSchema(validationSchema)) {
+      this.schema = validationSchema
+    }
+    // If it's a plain JS object, convert to Joi.object
+    else if (typeof validationSchema === "object" && validationSchema !== null) {
+      this.schema = Joi.object(validationSchema)
+    } else {
+      throw new Error("Invalid schema provided to ValidationHelper")
+    }
   }
 
   validate(requestData) {
@@ -21,9 +30,8 @@ class ValidationHelper {
 
   formatValidationErrors(errorDetails) {
     return errorDetails.reduce((errorObject, currentError) => {
-      const fieldName = currentError.context.label
+      const fieldName = currentError.context?.label || currentError.path?.[0] || "unknown"
       const errorMessage = this.formatErrorMessage(currentError)
-
       errorObject[fieldName] = errorMessage
       return errorObject
     }, {})

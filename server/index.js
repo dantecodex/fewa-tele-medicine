@@ -7,7 +7,7 @@ import "dotenv/config"
 import morgan from "morgan"
 
 import logger from "./src/utils/logger.js"
-import apiRouter from "./src/api/mainRouter.js"
+import apiRouter from "./src/api/index.router.js"
 import globalErrorHandler from "./src/utils/globalErrorHandler.js"
 import requestId from "./src/middleware/requestId.middleware.js"
 import rateLimiter from "./src/utils/rateLimiter.js"

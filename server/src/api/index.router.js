@@ -7,6 +7,7 @@ import authRouter from "./auth.router.js"
 import Upload from "../middleware/multer.middleware.js"
 import zoomController from "../controller/zoom.controller.js"
 import authorizeRole from "../middleware/authorization.middleware.js"
+import doctorController from "../controller/doctor.controller.js"
 
 const apiRouter = express.Router()
 
@@ -17,5 +18,9 @@ apiRouter.use(checkAuth) // Middleware to check if the user exist or not
 apiRouter.route("/user/profile").put(Upload().single("avatar"), userController.updateProfile)
 
 apiRouter.route("/zoom/create-meeting").post(authorizeRole("DOCTOR"), zoomController.createMeeting)
+
+apiRouter
+  .route("/doctor/time-slot")
+  .post(authorizeRole("DOCTOR"), doctorController.setDoctorAvailability)
 
 export default apiRouter

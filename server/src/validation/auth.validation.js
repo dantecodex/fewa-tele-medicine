@@ -7,7 +7,7 @@ const signup = new ValidationHelper({
   username: joi.string().min(3).trim().required(),
   email: joi.string().email().trim().required(),
   password: joi.string().min(6).required(),
-  role: joi.string().valid("ADMIN", "PATIENT").required(),
+  role: joi.string().valid("DOCTOR", "PATIENT").required(),
 })
 const login = new ValidationHelper({
   identifier: joi.string().min(3).required(),

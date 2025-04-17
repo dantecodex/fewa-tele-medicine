@@ -16,6 +16,7 @@ async function main() {
       username: "saurabh",
       password,
       role: "DOCTOR",
+      is_verified: true
     },
   })
 

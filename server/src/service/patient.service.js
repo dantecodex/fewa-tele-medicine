@@ -5,7 +5,8 @@ const patientList = async () => {
         where: {
             is_active: true,
             deleted_at: null,
-            is_verified: true
+            is_verified: true,
+            role: "PATIENT"
         },
         select: {
             id: true,

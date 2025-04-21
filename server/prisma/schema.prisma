@@ -31,6 +31,8 @@ model User {
   password_reset_otp_expires_at DateTime?
   role                          Role
   Timeslot                      Timeslot[]
+  Patient_Meeting               Meeting[]  @relation("patient")
+  Doctor_Meeting                Meeting[]  @relation("doctor")
 }
 
 model Timeslot {
@@ -44,6 +46,26 @@ model Timeslot {
   doctor     User             @relation(fields: [doctor_id], references: [id])
 
   @@unique([doctor_id, weekday, start_time, end_time], name: "unique_doctor_slot")
+}
+
+model Meeting {
+  id         Int      @id @default(autoincrement())
+  meeting_id Int
+  topic      String
+  agenda     String?
+  join_url   String
+  password   String
+  start_time DateTime
+  duration   Int
+  timezone   String
+  created_at DateTime
+  updated_at DateTime @updatedAt()
+
+  patient    User @relation("patient", fields: [patient_id], references: [id])
+  patient_id Int
+
+  doctor    User @relation("doctor", fields: [doctor_id], references: [id])
+  doctor_id Int
 }
 
 enum Role {

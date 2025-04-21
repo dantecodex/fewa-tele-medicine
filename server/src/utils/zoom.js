@@ -33,18 +33,18 @@ const getZoomAccessToken = async () => {
   return accessToken
 }
 
-const createZoomMeeting = async () => {
+const createZoomMeeting = async (validatedData) => {
   const token = await getZoomAccessToken()
 
   const userId = "me"
   const url = `https://api.zoom.us/v2/users/${userId}/meetings`
 
   const meetingDetails = {
-    topic: "Test Meeting",
+    topic: validatedData.topic,
+    schedule_for: validatedData.schedule_for,
+    start_time: validatedData.start_time,
     type: 2,
-    start_time: Date.now().toLocaleString(),
-    duration: 30,
-    timezone: "UTC",
+    timezone: validatedData.timezone ?? "UTC",
     settings: {
       host_video: true,
       participant_video: true,

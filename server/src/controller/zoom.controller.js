@@ -1,10 +1,13 @@
 import zoomService from "../service/zoom.service.js"
 import apiResponseHandler from "../utils/apiResponseHandler.js"
 import asyncErrorHandler from "../utils/asyncErrorHandler.js"
+import zoomValidation from "../validation/zoom.validation.js"
 
-const createMeeting = asyncErrorHandler(async (req, res) => {
-  const meetingData = await zoomService.createMeeting()
+const createZoomMeeting = asyncErrorHandler(async (req, res) => {
+  const validatedData = zoomValidation.createZoomMeeting(req.body)
+
+  const meetingData = await zoomService.createZoomMeeting(validatedData, { id: req.user.id, name: req.user.first + ' ' + req.user.last })
   res.status(201).json(apiResponseHandler("Zoom meeting has been created", meetingData))
 })
 
-export default { createMeeting }
+export default { createZoomMeeting }

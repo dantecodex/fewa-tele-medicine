@@ -1,4 +1,4 @@
-import staticData from "../constants/staticData.js"
+import staticData from "../constants/httpStatusCode.constant.js"
 class CustomError extends Error {
   constructor(message, statusCode, details = null) {
     super(message)

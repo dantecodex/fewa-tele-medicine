@@ -12,11 +12,30 @@ const setDoctorAvailability = async (validatedData, doctorId) => {
       mode: data.mode,
     }
   })
-  // console.log("dataToInsert", dataToInsert);
 
   await prisma.timeslot.createMany({ data: dataToInsert })
 }
 
+const upcomingMeetingList = async (doctorId) => {
+  const list = await prisma.meeting.findMany({
+    where: {
+      doctor_id: doctorId
+    },
+    include: {
+      patient: {
+        select: {
+          first: true,
+          last: true,
+          email: true,
+          phone: true
+        }
+      }
+    }
+  })
+  return list
+}
+
 export default {
   setDoctorAvailability,
+  upcomingMeetingList
 }

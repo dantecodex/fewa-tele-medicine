@@ -20,4 +20,24 @@ const patientList = async () => {
     return patientList
 }
 
-export default { patientList }
+const upcomingMeetingList = async (patientID) => {
+    const list = await prisma.meeting.findMany({
+        where: {
+            patient_id: patientID
+        },
+        include: {
+            doctor: {
+                select: {
+                    first: true,
+                    last: true,
+                    phone: true,
+                    email: true
+                }
+            }
+        }
+    })
+
+    return list
+}
+
+export default { patientList, upcomingMeetingList }

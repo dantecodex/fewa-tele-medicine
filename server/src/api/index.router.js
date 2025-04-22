@@ -23,7 +23,9 @@ apiRouter.route("/zoom/create-meeting").post(authorizeRole("DOCTOR"), zoomContro
 apiRouter
   .route("/doctor/time-slot")
   .post(authorizeRole("DOCTOR"), doctorController.setDoctorAvailability)
+apiRouter.route("/doctor/meeting").get(authorizeRole("DOCTOR"), doctorController.upcomingMeetingList)
 
 apiRouter.route('/patient/list').get(authorizeRole("DOCTOR"), patientController.patientList)
+apiRouter.route('/patient/meeting').get(authorizeRole("PATIENT"), patientController.upcomingMeetingList)
 
 export default apiRouter

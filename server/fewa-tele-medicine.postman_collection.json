@@ -1,375 +1,677 @@
 {
-  "info": {
-    "_postman_id": "71ca0562-aa1a-4794-ab4b-436a64e2efb6",
-    "name": "fewa-tele-medicine",
-    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-    "_exporter_id": "41182395"
-  },
-  "item": [
-    {
-      "name": "Authentication",
-      "item": [
-        {
-          "name": "Signup",
-          "request": {
-            "method": "POST",
-            "header": [],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n    \"first\": \"saurbh\",\n    \"last\": \"jain\",\n    \"email\": \"saurbh23@gmail.com\",\n    \"phone\": \"98765431505\",\n    \"username\": \"saur1h124\",\n    \"password\": \"password\",\n    \"role\": \"DOCTOR\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "localhost:2000/api/v1/auth/signup",
-              "host": ["localhost"],
-              "port": "2000",
-              "path": ["api", "v1", "auth", "signup"]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Verify Email",
-          "request": {
-            "method": "POST",
-            "header": [],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n    \"otp\": \"719974\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "localhost:2000/api/v1/auth/verify-email",
-              "host": ["localhost"],
-              "port": "2000",
-              "path": ["api", "v1", "auth", "verify-email"]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Resend email verification otp",
-          "request": {
-            "method": "POST",
-            "header": [],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n    \"email\": \"saurbh2212@gmail.com\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "localhost:2000/api/v1/auth/resend-verify-email",
-              "host": ["localhost"],
-              "port": "2000",
-              "path": ["api", "v1", "auth", "resend-verify-email"]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Login",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test(\"Handle accessToken based on login response\", function () {",
-                  "    var jsonData = pm.response.json();",
-                  "    if (jsonData.success === true) {",
-                  "        pm.collectionVariables.set(\"accessToken\", jsonData.data.accessToken);",
-                  "    } else {",
-                  "        pm.collectionVariables.unset(\"accessToken\");",
-                  "    }",
-                  "});",
-                  ""
-                ],
-                "type": "text/javascript",
-                "packages": {}
-              }
-            }
-          ],
-          "request": {
-            "method": "POST",
-            "header": [],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n    \"identifier\": \"saur1h124\",\n    \"password\": \"password\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "localhost:2000/api/v1/auth/login",
-              "host": ["localhost"],
-              "port": "2000",
-              "path": ["api", "v1", "auth", "login"]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Send forget password otp",
-          "request": {
-            "method": "POST",
-            "header": [],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n    \"email\": \"saurbh2212@gmail.com\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "localhost:2000/api/v1/auth/forgot-password",
-              "host": ["localhost"],
-              "port": "2000",
-              "path": ["api", "v1", "auth", "forgot-password"]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Verify forgot password otp",
-          "protocolProfileBehavior": {
-            "disableBodyPruning": true
-          },
-          "request": {
-            "method": "GET",
-            "header": [],
-            "body": {
-              "mode": "raw",
-              "raw": "",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "localhost:2000/api/v1/auth/forgot-password?otp=120933",
-              "host": ["localhost"],
-              "port": "2000",
-              "path": ["api", "v1", "auth", "forgot-password"],
-              "query": [
-                {
-                  "key": "otp",
-                  "value": "120933"
-                }
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Forget password with token",
-          "request": {
-            "method": "PATCH",
-            "header": [],
-            "body": {
-              "mode": "raw",
-              "raw": "{\r\n    \"password\": \"password1\",\r\n    \"resetPasswordToken\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InNhdXJiaDIyMTJAZ21haWwuY29tIiwiaWF0IjoxNzQzNTAxOTU2LCJleHAiOjE3NDM1MDI1NTZ9.vnufUTE2CnQWEjCdLvtVeBZ5FUtQ2fOqqwkTL4wKSQM\"\r\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "localhost:2000/api/v1/auth/forgot-password",
-              "host": ["localhost"],
-              "port": "2000",
-              "path": ["api", "v1", "auth", "forgot-password"]
-            }
-          },
-          "response": []
-        }
-      ]
-    },
-    {
-      "name": "User",
-      "item": [
-        {
-          "name": "Update profile",
-          "request": {
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{accessToken}}",
-                  "type": "string"
-                }
-              ]
-            },
-            "method": "PUT",
-            "header": [],
-            "body": {
-              "mode": "formdata",
-              "formdata": [
-                {
-                  "key": "first",
-                  "value": "Anshul",
-                  "type": "text"
-                },
-                {
-                  "key": "last",
-                  "value": "Rajput",
-                  "type": "text"
-                },
-                {
-                  "key": "email",
-                  "value": "anshulrajput237@gmail.com",
-                  "type": "text"
-                },
-                {
-                  "key": "password",
-                  "value": "",
-                  "type": "text",
-                  "disabled": true
-                },
-                {
-                  "key": "title",
-                  "value": "MR",
-                  "type": "text"
-                },
-                {
-                  "key": "avatar",
-                  "type": "file",
-                  "src": "/home/tw/Downloads/dante-dmc-wallpaper.jpg"
-                },
-                {
-                  "key": "degree",
-                  "value": "danger",
-                  "type": "text"
-                }
-              ]
-            },
-            "url": {
-              "raw": "localhost:2000/api/v1/user/profile",
-              "host": ["localhost"],
-              "port": "2000",
-              "path": ["api", "v1", "user", "profile"]
-            }
-          },
-          "response": []
-        }
-      ]
-    },
-    {
-      "name": "zoom",
-      "item": [
-        {
-          "name": "create meeting",
-          "request": {
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{accessToken}}",
-                  "type": "string"
-                }
-              ]
-            },
-            "method": "POST",
-            "header": [],
-            "body": {
-              "mode": "raw",
-              "raw": "",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "localhost:2000/api/v1/zoom/create-meeting",
-              "host": ["localhost"],
-              "port": "2000",
-              "path": ["api", "v1", "zoom", "create-meeting"]
-            }
-          },
-          "response": []
-        }
-      ]
-    },
-    {
-      "name": "Doctor",
-      "item": [
-        {
-          "name": "Schedule time slot",
-          "request": {
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{accessToken}}",
-                  "type": "string"
-                }
-              ]
-            },
-            "method": "POST",
-            "header": [],
-            "body": {
-              "mode": "raw",
-              "raw": "[\n  {\n    \"weekday\": \"MONDAY\",\n    \"startTime\": \"2025-04-21T09:00:00.000Z\",\n    \"endTime\": \"2025-04-21T10:00:00.000Z\",\n    \"mode\": \"ONLINE\"\n  },\n  {\n    \"weekday\": \"TUESDAY\",\n    \"startTime\": \"2025-04-22T11:00:00.000Z\",\n    \"endTime\": \"2025-04-22T12:00:00.000Z\",\n    \"mode\": \"OFFLINE\"\n  },\n  {\n    \"weekday\": \"WEDNESDAY\",\n    \"startTime\": \"2025-04-23T14:00:00.000Z\",\n    \"endTime\": \"2025-04-23T15:00:00.000Z\",\n    \"mode\": \"ONLINE\"\n  },\n  {\n    \"weekday\": \"THURSDAY\",\n    \"startTime\": \"2025-04-24T16:00:00.000Z\",\n    \"endTime\": \"2025-04-24T17:00:00.000Z\",\n    \"mode\": \"OFFLINE\"\n  },\n  {\n    \"weekday\": \"FRIDAY\",\n    \"startTime\": \"2025-04-25T08:00:00.000Z\",\n    \"endTime\": \"2025-04-25T09:00:00.000Z\",\n    \"mode\": \"ONLINE\"\n  }\n]\n",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "localhost:2000/api/v1/doctor/time-slot",
-              "host": ["localhost"],
-              "port": "2000",
-              "path": ["api", "v1", "doctor", "time-slot"]
-            }
-          },
-          "response": []
-        }
-      ]
-    }
-  ],
-  "event": [
-    {
-      "listen": "prerequest",
-      "script": {
-        "type": "text/javascript",
-        "packages": {},
-        "exec": [""]
-      }
-    },
-    {
-      "listen": "test",
-      "script": {
-        "type": "text/javascript",
-        "packages": {},
-        "exec": [""]
-      }
-    }
-  ],
-  "variable": [
-    {
-      "key": "accessToken",
-      "value": ""
-    }
-  ]
+	"info": {
+		"_postman_id": "71ca0562-aa1a-4794-ab4b-436a64e2efb6",
+		"name": "fewa-tele-medicine",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "41182395"
+	},
+	"item": [
+		{
+			"name": "Authentication",
+			"item": [
+				{
+					"name": "Signup",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"first\": \"saurbh\",\n    \"last\": \"jain\",\n    \"email\": \"saurbh23@gmail.com\",\n    \"phone\": \"98765431505\",\n    \"username\": \"saur1h124\",\n    \"password\": \"password\",\n    \"role\": \"DOCTOR\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:2000/api/v1/auth/signup",
+							"host": [
+								"localhost"
+							],
+							"port": "2000",
+							"path": [
+								"api",
+								"v1",
+								"auth",
+								"signup"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Verify Email",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"otp\": \"719974\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:2000/api/v1/auth/verify-email",
+							"host": [
+								"localhost"
+							],
+							"port": "2000",
+							"path": [
+								"api",
+								"v1",
+								"auth",
+								"verify-email"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Resend email verification otp",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"saurbh2212@gmail.com\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:2000/api/v1/auth/resend-verify-email",
+							"host": [
+								"localhost"
+							],
+							"port": "2000",
+							"path": [
+								"api",
+								"v1",
+								"auth",
+								"resend-verify-email"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Handle accessToken based on login response\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    if (jsonData.success === true) {",
+									"        pm.collectionVariables.set(\"accessToken\", jsonData.data.accessToken);",
+									"    } else {",
+									"        pm.collectionVariables.unset(\"accessToken\");",
+									"    }",
+									"});",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"identifier\": \"saurabh\",\n    \"password\": \"password\"\n}\n\n// Patient below\n// {\n//     \"identifier\": \"kirand\",\n//     \"password\": \"password\"\n// }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:2000/api/v1/auth/login",
+							"host": [
+								"localhost"
+							],
+							"port": "2000",
+							"path": [
+								"api",
+								"v1",
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Send forget password otp",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"saurbh2212@gmail.com\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:2000/api/v1/auth/forgot-password",
+							"host": [
+								"localhost"
+							],
+							"port": "2000",
+							"path": [
+								"api",
+								"v1",
+								"auth",
+								"forgot-password"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Verify forgot password otp",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:2000/api/v1/auth/forgot-password?otp=120933",
+							"host": [
+								"localhost"
+							],
+							"port": "2000",
+							"path": [
+								"api",
+								"v1",
+								"auth",
+								"forgot-password"
+							],
+							"query": [
+								{
+									"key": "otp",
+									"value": "120933"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Forget password with token",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"password\": \"password1\",\r\n    \"resetPasswordToken\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InNhdXJiaDIyMTJAZ21haWwuY29tIiwiaWF0IjoxNzQzNTAxOTU2LCJleHAiOjE3NDM1MDI1NTZ9.vnufUTE2CnQWEjCdLvtVeBZ5FUtQ2fOqqwkTL4wKSQM\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:2000/api/v1/auth/forgot-password",
+							"host": [
+								"localhost"
+							],
+							"port": "2000",
+							"path": [
+								"api",
+								"v1",
+								"auth",
+								"forgot-password"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "User",
+			"item": [
+				{
+					"name": "Update profile",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "first",
+									"value": "Anshul",
+									"type": "text"
+								},
+								{
+									"key": "last",
+									"value": "Rajput",
+									"type": "text"
+								},
+								{
+									"key": "email",
+									"value": "anshulrajput237@gmail.com",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "title",
+									"value": "MR",
+									"type": "text"
+								},
+								{
+									"key": "avatar",
+									"type": "file",
+									"src": "/home/tw/Downloads/dante-dmc-wallpaper.jpg"
+								},
+								{
+									"key": "degree",
+									"value": "danger",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "localhost:2000/api/v1/user/profile",
+							"host": [
+								"localhost"
+							],
+							"port": "2000",
+							"path": [
+								"api",
+								"v1",
+								"user",
+								"profile"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "zoom",
+			"item": [
+				{
+					"name": "create meeting",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"topic\": \"Test Meeting\",\n    \"description\": \"THis is the description for test meeting\",\n    \"timezone\": \"UTC\",\n    \"start_time\": \"2025-04-22T14:30:00Z\",\n    \"userId\": 6\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:2000/api/v1/zoom/create-meeting",
+							"host": [
+								"localhost"
+							],
+							"port": "2000",
+							"path": [
+								"api",
+								"v1",
+								"zoom",
+								"create-meeting"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "create meeting",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "localhost:2000/api/v1/zoom/create-meeting",
+									"host": [
+										"localhost"
+									],
+									"port": "2000",
+									"path": [
+										"api",
+										"v1",
+										"zoom",
+										"create-meeting"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Security-Policy",
+									"value": "default-src 'self';script-src 'self' 'unsafe-inline';style-src 'self' 'unsafe-inline';base-uri 'self';font-src 'self' https: data:;form-action 'self';frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src-attr 'none';upgrade-insecure-requests"
+								},
+								{
+									"key": "Cross-Origin-Opener-Policy",
+									"value": "same-origin"
+								},
+								{
+									"key": "Cross-Origin-Resource-Policy",
+									"value": "same-origin"
+								},
+								{
+									"key": "Origin-Agent-Cluster",
+									"value": "?1"
+								},
+								{
+									"key": "Referrer-Policy",
+									"value": "no-referrer"
+								},
+								{
+									"key": "Strict-Transport-Security",
+									"value": "max-age=31536000; includeSubDomains"
+								},
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff"
+								},
+								{
+									"key": "X-DNS-Prefetch-Control",
+									"value": "off"
+								},
+								{
+									"key": "X-Download-Options",
+									"value": "noopen"
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "SAMEORIGIN"
+								},
+								{
+									"key": "X-Permitted-Cross-Domain-Policies",
+									"value": "none"
+								},
+								{
+									"key": "X-XSS-Protection",
+									"value": "0"
+								},
+								{
+									"key": "X-RateLimit-Limit",
+									"value": "1000"
+								},
+								{
+									"key": "X-RateLimit-Remaining",
+									"value": "996"
+								},
+								{
+									"key": "Date",
+									"value": "Mon, 21 Apr 2025 09:42:12 GMT"
+								},
+								{
+									"key": "X-RateLimit-Reset",
+									"value": "1745232035"
+								},
+								{
+									"key": "X-Request-ID",
+									"value": "98d1e79a-3367-42b2-af40-0bf059d1802b"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"9a6-Q7uGrApFqxePZ2MibAVHrDsk0lE\""
+								},
+								{
+									"key": "Vary",
+									"value": "Accept-Encoding"
+								},
+								{
+									"key": "Content-Encoding",
+									"value": "br"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"success\": true,\n    \"message\": \"Zoom meeting has been created\",\n    \"data\": {\n        \"uuid\": \"kdxagFMvRH+t/ekDIe8W7g==\",\n        \"id\": 97581511918,\n        \"host_id\": \"2znkm56oS9C0bvKR8x7PzA\",\n        \"host_email\": \"anshulrajput@thoughtwin.com\",\n        \"topic\": \"TEsting topic\",\n        \"type\": 2,\n        \"status\": \"waiting\",\n        \"start_time\": \"2025-04-21T09:42:13Z\",\n        \"duration\": 60,\n        \"timezone\": \"UTC\",\n        \"created_at\": \"2025-04-21T09:42:13Z\",\n        \"start_url\": \"https://zoom.us/s/97581511918?zak=eyJ0eXAiOiJKV1QiLCJzdiI6IjAwMDAwMiIsInptX3NrbSI6InptX28ybSIsImFsZyI6IkhTMjU2In0.eyJpc3MiOiJ3ZWIiLCJjbHQiOjAsIm1udW0iOiI5NzU4MTUxMTkxOCIsImF1ZCI6ImNsaWVudHNtIiwidWlkIjoiMnpua201Nm9TOUMwYnZLUjh4N1B6QSIsInppZCI6Ijk1YzVkMzcxZjM3MzRlOTE4NGNjYTFiZTFkNTI3NzY3Iiwic2siOiIwIiwic3R5IjoxLCJ3Y2QiOiJhdzEiLCJleHAiOjE3NDUyMzU3MzMsImlhdCI6MTc0NTIyODUzMywiYWlkIjoibFFyNWNqRXVSbldEWW1aX3c2WWMyUSIsImNpZCI6IiJ9.j328RH9xvfFqW5wLi7wfLnOHGjjJwe2QuMrL9VcUbcE\",\n        \"join_url\": \"https://zoom.us/j/97581511918?pwd=bj70NToOEdaaEfz3PqQTJMm2Hase9I.1\",\n        \"password\": \"6egV6n\",\n        \"h323_password\": \"040612\",\n        \"pstn_password\": \"040612\",\n        \"encrypted_password\": \"bj70NToOEdaaEfz3PqQTJMm2Hase9I.1\",\n        \"settings\": {\n            \"host_video\": false,\n            \"participant_video\": false,\n            \"cn_meeting\": false,\n            \"in_meeting\": false,\n            \"join_before_host\": false,\n            \"jbh_time\": 0,\n            \"mute_upon_entry\": false,\n            \"watermark\": false,\n            \"use_pmi\": false,\n            \"approval_type\": 2,\n            \"audio\": \"voip\",\n            \"auto_recording\": \"none\",\n            \"enforce_login\": false,\n            \"enforce_login_domains\": \"\",\n            \"alternative_hosts\": \"\",\n            \"alternative_host_update_polls\": false,\n            \"close_registration\": false,\n            \"show_share_button\": false,\n            \"allow_multiple_devices\": false,\n            \"registrants_confirmation_email\": true,\n            \"waiting_room\": true,\n            \"request_permission_to_unmute_participants\": false,\n            \"registrants_email_notification\": true,\n            \"meeting_authentication\": false,\n            \"encryption_type\": \"enhanced_encryption\",\n            \"approved_or_denied_countries_or_regions\": {\n                \"enable\": false\n            },\n            \"breakout_room\": {\n                \"enable\": false\n            },\n            \"internal_meeting\": false,\n            \"continuous_meeting_chat\": {\n                \"enable\": true,\n                \"auto_add_invited_external_users\": false,\n                \"auto_add_meeting_participants\": false,\n                \"channel_id\": \"web_sch_00ef76a758f74d45a8aa3abecd90b426\"\n            },\n            \"participant_focused_meeting\": false,\n            \"push_change_to_calendar\": false,\n            \"resources\": [],\n            \"allow_host_control_participant_mute_state\": false,\n            \"alternative_hosts_email_notification\": true,\n            \"show_join_info\": false,\n            \"device_testing\": false,\n            \"focus_mode\": false,\n            \"meeting_invitees\": [],\n            \"private_meeting\": false,\n            \"email_notification\": true,\n            \"host_save_video_order\": false,\n            \"sign_language_interpretation\": {\n                \"enable\": false\n            },\n            \"email_in_attendee_report\": false\n        },\n        \"creation_source\": \"open_api\",\n        \"pre_schedule\": false\n    }\n}"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Doctor",
+			"item": [
+				{
+					"name": "Schedule time slot",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "[\n  {\n    \"weekday\": \"MONDAY\",\n    \"startTime\": \"2025-04-21T09:00:00.000Z\",\n    \"endTime\": \"2025-04-21T10:00:00.000Z\",\n    \"mode\": \"ONLINE\"\n  },\n  {\n    \"weekday\": \"TUESDAY\",\n    \"startTime\": \"2025-04-22T11:00:00.000Z\",\n    \"endTime\": \"2025-04-22T12:00:00.000Z\",\n    \"mode\": \"OFFLINE\"\n  },\n  {\n    \"weekday\": \"WEDNESDAY\",\n    \"startTime\": \"2025-04-23T14:00:00.000Z\",\n    \"endTime\": \"2025-04-23T15:00:00.000Z\",\n    \"mode\": \"ONLINE\"\n  },\n  {\n    \"weekday\": \"THURSDAY\",\n    \"startTime\": \"2025-04-24T16:00:00.000Z\",\n    \"endTime\": \"2025-04-24T17:00:00.000Z\",\n    \"mode\": \"OFFLINE\"\n  },\n  {\n    \"weekday\": \"FRIDAY\",\n    \"startTime\": \"2025-04-25T08:00:00.000Z\",\n    \"endTime\": \"2025-04-25T09:00:00.000Z\",\n    \"mode\": \"ONLINE\"\n  }\n]\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:2000/api/v1/doctor/time-slot",
+							"host": [
+								"localhost"
+							],
+							"port": "2000",
+							"path": [
+								"api",
+								"v1",
+								"doctor",
+								"time-slot"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Doctor upcoming request",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:2000/api/v1/doctor/meeting",
+							"host": [
+								"localhost"
+							],
+							"port": "2000",
+							"path": [
+								"api",
+								"v1",
+								"doctor",
+								"meeting"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Patient",
+			"item": [
+				{
+					"name": "Patient upcoming request",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:2000/api/v1/patient/meeting",
+							"host": [
+								"localhost"
+							],
+							"port": "2000",
+							"path": [
+								"api",
+								"v1",
+								"patient",
+								"meeting"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "accessToken",
+			"value": ""
+		}
+	]
 }

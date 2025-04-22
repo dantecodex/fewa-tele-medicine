@@ -49,8 +49,8 @@ model Timeslot {
 }
 
 model Meeting {
-  id         Int      @id @default(autoincrement())
-  meeting_id Int
+  id         Int           @id @default(autoincrement())
+  meeting_id String
   topic      String
   agenda     String?
   join_url   String
@@ -58,8 +58,9 @@ model Meeting {
   start_time DateTime
   duration   Int
   timezone   String
+  status     MeetingStatus @default(PENDING)
   created_at DateTime
-  updated_at DateTime @updatedAt()
+  updated_at DateTime      @updatedAt()
 
   patient    User @relation("patient", fields: [patient_id], references: [id])
   patient_id Int
@@ -94,4 +95,10 @@ enum Weekday {
 enum ConsultationMode {
   ONLINE
   OFFLINE
+}
+
+enum MeetingStatus {
+  PENDING
+  CANCELLED
+  COMPLETED
 }

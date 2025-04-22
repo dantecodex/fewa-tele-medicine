@@ -7,7 +7,7 @@ import emailQueue from "../jobs/queues/email.queue.js"
 
 
 const __dirname = import.meta.dirname
-import fs from "fs"
+import fs from "fs/promises"
 import path from "path"
 
 const getZoomAccessToken = async () => {
@@ -43,12 +43,12 @@ const getZoomAccessToken = async () => {
 
 const createZoomMeeting = async (validatedData, doctorData) => {
 
-  const userData = await prisma.user.findUnique({
+  const userData = await prisma.user.findFirst({
     where: { id: validatedData.userId },
     select: { email: true }
   })
 
-  if (userData) {
+  if (!userData) {
     logger.info("Invalid patient ID provided when creating a zoom meeting")
     throw new CustomError("Invalid patient ID provided when creating a zoom meeting", 404)
   }
@@ -58,18 +58,17 @@ const createZoomMeeting = async (validatedData, doctorData) => {
   const userId = "me"
   const url = `https://api.zoom.us/v2/users/${userId}/meetings`
 
-  const timezonePath = path.join(__dirname + '../constants/timezone.constant.js')
-  // src/constants/timezone.constant.js
+  const timezonePath = path.join(__dirname + './../constants/timezone.constant.json')
+
   const jsonString = await fs.readFile(timezonePath, 'utf8')
   const timezoneList = JSON.parse(jsonString)
 
-  if (!timezone.hasOwn(timezoneList, validatedData.timezone)) {
+  if (!Object.hasOwn(timezoneList, validatedData.timezone)) {
     throw new CustomError("Invalid timezone provided", 400)
   }
 
   const meetingDetails = {
     topic: validatedData.topic,
-    schedule_for: userData.email,
     start_time: validatedData.start_time,
     type: 2,
     timezone: validatedData.timezone,
@@ -98,8 +97,9 @@ const createZoomMeeting = async (validatedData, doctorData) => {
 
   const meeting = await prisma.meeting.create({
     data: {
-      meeting_id: meetingData.id,
+      meeting_id: String(meetingData.id),
       topic: meetingData.topic,
+      agenda: meetingData.description ?? null,
       join_url: meetingData.join_url,
       password: meetingData.password,
       start_time: meetingData.start_time,

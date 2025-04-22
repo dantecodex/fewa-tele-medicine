@@ -117,7 +117,6 @@ const createZoomMeeting = async (validatedData, doctorData) => {
     message: `Your zoom meeting with Dr. ${doctorData.name}, Your meeting link: ${meetingData.join_url}`,
   })
 
-  delete meeting.id
   return meeting
 }
 

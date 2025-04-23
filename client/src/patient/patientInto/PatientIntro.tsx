@@ -108,7 +108,7 @@ const PatientIntro: React.FC<PatientIntroProps> = ({ currentProvider }) => {
       <Box mt={4}>
         <Typography variant="h5">Video Preview (Test Audio/Video Component)</Typography>
         <Box sx={{}}>
-        <VideoComponent/>
+          <VideoComponent />
         </Box>
       </Box>
     </Container>

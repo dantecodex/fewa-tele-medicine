@@ -12,7 +12,7 @@ import { navigate } from "wouter/use-browser-location";
 import { Link } from "wouter";
 
 const Registration = () => {
-  const [step, setStep] = useState("signUp"); // "signUp", "verifyOtp", "setPassword"
+  const [step, setStep] = useState("signUp");
   const [otpSent, setOtpSent] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
@@ -76,7 +76,7 @@ const Registration = () => {
             })}
             margin="normal"
             error={!!errors.username}
-            helperText={errors.username?.message}
+            helperText={errors?.username?.message}
           />
 
           <TextField

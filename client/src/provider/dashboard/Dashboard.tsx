@@ -1,11 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Grid,
   Typography,
   Card,
   CardContent,
   Button,
-  TextField,
   Table,
   TableBody,
   TableCell,
@@ -13,107 +12,178 @@ import {
   TableHead,
   TableRow,
   Paper,
-  Menu,
   MenuItem,
-  Avatar,
-  InputAdornment,
-  IconButton,
-  Snackbar
+  CircularProgress,
+  Chip,
+  Select,
 } from "@mui/material";
-import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
-import MoreVertIcon from "@mui/icons-material/MoreVert";
-import "./Dashboard.scss";
 import { navigate } from "wouter/use-browser-location";
 import MainLayout from "../../component/layout/MainLayout.tsx";
+import "./Dashboard.scss";
+
+type Meeting = {
+  id: number;
+  meeting_id: string;
+  topic: string;
+  status: string;
+  patient: {
+    first: string;
+    last: string;
+    email: string;
+    phone: string;
+  };
+};
 
 const Dashboard = () => {
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
-  const [selectedDate, setSelectedDate] = useState("");
-  const [patients] = useState([
-    { name: "John Doe", status: 0 },
-    { name: "Jane Smith", status: 1 },
-  ]);
-  const [appointments] = useState([
-    { date: "March 10, 2025", startTime: "10:00 AM", endTime: "10:30 AM", duration: "30 min" },
-    { date: "March 11, 2025", startTime: "11:00 AM", endTime: "11:20 AM", duration: "20 min" },
-  ]);
+  const providerUserName = localStorage.getItem("userName") || '""';
+  const [patients, setPatients] = useState<{ first: string; last: string; email: string; phone: string; id: number }[]>([]);
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [meetings, setMeetings] = useState<Meeting[]>([]);
+  const [savingStatusMeetingId, setSavingStatusMeetingId] = useState(null);
 
-  const [open, setOpen] = useState(false);
-  
-  const invitationLink = "https://yourapp.com/invite?code=123456"; // Replace with dynamic link
+  const fetchDoctorMeetings = async () => {
+    try {
+      const token = localStorage.getItem('accessToken');
+      const response = await fetch('http://localhost:2000/api/v1/doctor/meeting', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
-  const copyToClipboard = () => {
-    navigator.clipboard.writeText(invitationLink)
-      .then(() => setOpen(true)) // Show success message
-      .catch(err => console.error("Failed to copy: ", err));
+      const data = await response.json();
+
+      if (response.ok && data.success) {
+        console.log('Fetched doctor meetings successfully');
+        setMeetings(data.data);
+      } else {
+        console.error('Failed to fetch doctor meetings:', data.message);
+      }
+    } catch (error) {
+      console.error('Error fetching doctor meetings:', error);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const providerObj = { nameTitle: "Dr.", name: "John Doe", image: "" };
 
-  const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
-  const handleMenuClose = () => {
-    setAnchorEl(null);
-  };
+  useEffect(() => {
+    fetchDoctorMeetings();
+  }, []);
 
-  const sendInvitation = () => {
-    alert("Invitation sent to patient successfully!");
-    console.log("Sending invitation to", email || phone);
+
+  const handleStartMeeting = (patientId) => {
+    navigate(`/provider/video_conference/${patientId}`);
   };
 
-  const openChat = () => {
-    console.log("Chat button clicked");   
-    navigate("/provider/chat");
-  }
-  // const openVideo=()=>{
-  //   console.log("Video button clicked");
-  //   navigate("/provider/video_conference");
-  // }
 
-  const handleStartMeeting = () => {
-    const sessionName = 'telehealth-session-001';
-    const userName = 'doctor';
-    navigate("/provider/video_conference/");
+  const getPatientList = async () => {
+    const token = localStorage.getItem('accessToken');
+    try {
+      const response = await fetch("http://localhost:2000/api/v1/patient/list", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const data = await response.json();
+      console.log("Fetched patients API", data);
+      return data;
+    } catch (error) {
+      console.error("Error fetching patient list:", error);
+      throw error;
+    }
   };
+
+  useEffect(() => {
+    const fetchPatients = async () => {
+      try {
+        const response = await getPatientList();
+        console.log("API Response:", response);
+        setPatients(response.data);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPatients();
+  }, []);
+
+  const handleStatusChange = async (selectedStatus, meetingId) => {
+    const token = localStorage.getItem('accessToken');
+    setSavingStatusMeetingId(meetingId);
+
+    try {
+      const response = await fetch(`http://localhost:2000/api/v1/doctor/meeting/${selectedStatus}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ meetingId }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.success) {
+        console.log('Status updated successfully');
+        setMeetings(prevMeetings =>
+          prevMeetings.map(meeting =>
+            meeting.meeting_id === meetingId
+              ? { ...meeting, status: selectedStatus }
+              : meeting
+          )
+        );
+      } else {
+        console.error('Failed to update status:', data.message);
+      }
+    } catch (error) {
+      console.error('Error updating status:', error);
+    } finally {
+      setSavingStatusMeetingId(null);
+    }
+  };
+
+  const renderStatusChip = (status) => {
+    if (status === 'COMPLETED') {
+      return <Chip label="Completed" color="success" size="small" />;
+    } else if (status === 'PENDING') {
+      return <Chip label="Pending" color="warning" size="small" />;
+    } else {
+      return <Chip label={status} size="small" />;
+    }
+  };
+
 
   return (
     <MainLayout>
-    <Grid container spacing={3} p={3}>
-      {/* Header */}
-      {/* <Grid item xs={12}>
-        <Grid container justifyContent="space-between" alignItems="center">
-          <Typography variant="h4">Dashboard</Typography>
-          <div>
-            <Button onClick={handleMenuOpen} startIcon={<Avatar src={providerObj.image || "/assets/img/profilePic.jpg"} />}>
-              {providerObj.nameTitle} {providerObj.name}
-            </Button>
-            <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleMenuClose}>
-              <MenuItem onClick={handleMenuClose}>Logout</MenuItem>
-            </Menu>
-          </div>
+      <Grid container spacing={3} p={3}>
+
+        {/* Welcome Section */}
+        <Grid item xs={14} md={10}>
+          <Card>
+            <CardContent>
+              <Grid container alignItems="center">
+                <img src="/assets/img/dashboard.png" alt="Dashboard" style={{ width: 100, marginRight: 20 }} />
+                <Typography variant="h5">Hello! {JSON.parse(providerUserName || '""')}</Typography>
+              </Grid>
+            </CardContent>
+          </Card>
         </Grid>
-      </Grid> */}
 
-      {/* Welcome Section */}
-      <Grid item xs={14} md={10}>
+        {/* Invitation Form */}
+        {/* <Grid item xs={14} md={10}>
         <Card>
           <CardContent>
-            <Grid container alignItems="center">
-              <img src="/assets/img/dashboard.png" alt="Dashboard" style={{ width: 100, marginRight: 20 }} />
-              <Typography variant="h5">Hello! {providerObj.nameTitle} {providerObj.name}</Typography>
-            </Grid>
-          </CardContent>
-        </Card>
-      </Grid>
-
-      {/* Invitation Form */}
-      <Grid item xs={14} md={10}>
-        <Card>
-          <CardContent>
-            {/* <Typography variant="h6" gutterBottom>Click Here To Copy Invitation Link</Typography> */}
               <Typography
                 variant="h6"
                 gutterBottom
@@ -122,8 +192,6 @@ const Dashboard = () => {
               >
                 Click Here To Copy Invitation Link
               </Typography>
-
-              {/* Snackbar for confirmation */}
               <Snackbar
                 open={open}
                 autoHideDuration={2000}
@@ -147,83 +215,97 @@ const Dashboard = () => {
             </Grid>
           </CardContent>
         </Card>
-      </Grid>
+      </Grid> */}
 
-      {/* Completed Appointments Table */}
-      <Grid item xs={14} md={10}>
-        <Card>
-          <CardContent>
-            <Grid container justifyContent="space-between" alignItems="center">
-              <Typography variant="h6">Completed Appointments</Typography>
-              <TextField
-                type="date"
-                value={selectedDate}
-                onChange={(e) => setSelectedDate(e.target.value)}
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <CalendarTodayIcon />
-                    </InputAdornment>
-                  ),
-                }}
-              />
-            </Grid>
+        {/* Completed Appointments Table */}
+        <Grid item xs={14} md={10}>
+          <Card>
+            <CardContent>
+              <Grid container justifyContent="space-between" alignItems="center">
+                <Typography variant="h6"> All Appointments</Typography>
+              </Grid>
+              {loading ? (
+                <CircularProgress />
+              ) : (
+                <TableContainer component={Paper} sx={{ mt: 4 }}>
+                  <Table>
+                    <TableHead>
+                      <TableRow>
+                        <TableCell><b>Meeting ID</b></TableCell>
+                        <TableCell><b>Topic</b></TableCell>
+                        <TableCell><b>Patient Name</b></TableCell>
+                        <TableCell><b>Patient Email</b></TableCell>
+                        <TableCell><b>Patient Phone</b></TableCell>
+                        <TableCell><b>Status</b></TableCell>
+                      </TableRow>
+                    </TableHead>
+                    <TableBody>
+                      {meetings.map((meeting) => (
+                        <TableRow key={meeting.id}>
+                          <TableCell>{meeting.meeting_id}</TableCell>
+                          <TableCell>{meeting.topic}</TableCell>
+                          <TableCell>{meeting.patient.first} {meeting.patient.last}</TableCell>
+                          <TableCell>{meeting.patient.email}</TableCell>
+                          <TableCell>{meeting.patient.phone}</TableCell>
+                          <TableCell>
+                            {savingStatusMeetingId === meeting.id ? (
+                              <CircularProgress size={24} />
+                            ) : (
+                              <Select
+                                value={meeting.status}
+                                onChange={(e) => handleStatusChange(e.target.value, meeting.meeting_id,)}
+                                size="small"
+                                sx={{ minWidth: 120 }}
+                                renderValue={(selected) => renderStatusChip(selected)}
+                              >
+                                <MenuItem value="PENDING">
+                                  <Chip label="Pending" color="warning" size="small" />
+                                </MenuItem>
+                                <MenuItem value="COMPLETED">
+                                  <Chip label="Completed" color="success" size="small" />
+                                </MenuItem>
+                                <MenuItem value="CANCELLED">
+                                  <Chip label="Cancelled" color="error" size="small" />
+                                </MenuItem>
+                              </Select>
 
-            <TableContainer component={Paper} sx={{ marginTop: 2 }}>
-              <Table>
-                <TableHead>
-                  <TableRow>
-                    <TableCell>Date</TableCell>
-                    <TableCell>Call Start Time</TableCell>
-                    <TableCell>Call End Time</TableCell>
-                    <TableCell>Duration</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {appointments.map((appt, index) => (
-                    <TableRow key={index}>
-                      <TableCell>{appt.date}</TableCell>
-                      <TableCell>{appt.startTime}</TableCell>
-                      <TableCell>{appt.endTime}</TableCell>
-                      <TableCell>{appt.duration}</TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
-          </CardContent>
-        </Card>
-      </Grid>
+                            )}
+                          </TableCell>
 
-      {/* Patients List */}
-      <Grid item xs={14} md={10}>
-        <Card>
-          <CardContent>
-            <Typography variant="h6">Patients</Typography>
-            <TableContainer component={Paper}>
-              <Table>
-                <TableBody>
-                  {patients.map((patient, index) => (
-                    <TableRow key={index}>
-                      <TableCell>{patient.name}</TableCell>
-                      <TableCell>
-                        {/* {patient.status === 0 && ( */}
-                          <Button variant="contained" color="primary" onClick={handleStartMeeting}>Call</Button>
-                        {/* )} */}
-                      </TableCell>
-                      <TableCell>
-                        <Button variant="contained" color="secondary" onClick={openChat}>Chat</Button>
-                      </TableCell>
-                      {/* Call Button - Renders only if temp.status === 0 && temp.name exists */}
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
-          </CardContent>
-        </Card>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+
+                  </Table>
+                </TableContainer>
+              )}
+            </CardContent>
+          </Card>
+        </Grid>
+
+        {/* Patients List */}
+        <Grid item xs={14} md={10}>
+          <Card>
+            <CardContent>
+              <Typography variant="h6">Patients</Typography>
+              <TableContainer component={Paper}>
+                <Table>
+                  <TableBody>
+                    {patients.map((patient, index) => (
+                      <TableRow key={index}>
+                        <TableCell>{patient?.first}</TableCell>
+                        <TableCell>
+                          <Button variant="contained" color="primary" onClick={() => handleStartMeeting(patient.id)}> + Schedule a Meeting</Button>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            </CardContent>
+          </Card>
+        </Grid>
       </Grid>
-    </Grid>
     </MainLayout>
   );
 };

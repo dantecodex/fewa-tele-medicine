@@ -14,6 +14,7 @@ import {
 import { toast } from "sonner";
 import { IconButton, InputAdornment } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
+import { navigate } from "wouter/use-browser-location";
 
 
 // Validation Schema
@@ -97,6 +98,7 @@ const ForgotPassword = () => {
         setResetPasswordToken(result?.data?.resetPasswordToken);
         toast.success(result?.message || "OTP verified successfully");
         setStep(3);
+        // navigate("/provider/login");
       } else {
         // setMessages({ ...messages, otpError: result.message || "Invalid OTP" });
         toast.error(result?.message || "An error occurred. Please try again.");
@@ -119,7 +121,8 @@ const ForgotPassword = () => {
       if (result.success) {
         toast.success(result?.message || "Password reset successfully");
         setMessages(result.message);
-        setStep(1);
+        // setStep(1);
+        navigate("/provider/login");
       } else {
         setMessages({ ...messages, resetError: result.message || "Failed to reset password" });
       }

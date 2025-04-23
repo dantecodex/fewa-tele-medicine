@@ -64,15 +64,15 @@ const LiveVideoChat = () => {
       p={2} 
       sx={{ 
         display: "flex", 
-        flexDirection: { xs: "column", md: "row" },  // Column on small screens, Row on medium+
-        height: "100vh" // Full screen height
+        flexDirection: { xs: "column", md: "row" }, 
+        height: "100vh" 
       }}
     >
       
       {/* Video Call Section (Left Side) */}
       <Box 
         sx={{ 
-          flex: 2,  // Takes 2/3rd of the space
+          flex: 2,
           display: "flex", 
           justifyContent: "center", 
           alignItems: "center",

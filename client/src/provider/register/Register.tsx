@@ -222,7 +222,7 @@ const Registration = () => {
                       render={({ field }) => (
                         <Select {...field} label="Role">
                           <MenuItem value="PATIENT">Patient</MenuItem>
-                          <MenuItem value="ADMIN">Admin</MenuItem>
+                          <MenuItem value="DOCTOR">Doctor</MenuItem>
                         </Select>
                       )}
                     />

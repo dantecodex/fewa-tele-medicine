@@ -1,98 +1,87 @@
-"use client";
+import React, { useState } from 'react';
+import {
+  Box,
+  Button,
+  Checkbox,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  FormControl,
+  FormControlLabel,
+  FormGroup,
+  InputLabel,
+  MenuItem,
+  Select,
+  TextField,
+  Typography,
+  Grid,
+} from '@mui/material';
+import MainLayout from '../../component/layout/MainLayout.tsx';
+import { timezones } from '../../helpers/utils/TimeZones.js';
+import { time } from '../../helpers/utils/TimeZones.js';
+import { DateTime } from 'luxon';
 
-import { useEffect, useState, useRef, ChangeEvent, KeyboardEvent } from "react";
-import { TextField, Button, Box, Paper, Typography } from "@mui/material";
-import Jitsi from "react-jitsi"; // Import Jitsi Meet
-import { navigate } from "wouter/use-browser-location";
-import MainLayout from "../../component/layout/MainLayout.tsx";
+const ScheduleMeeting = () => {
+  const [date, setDate] = useState<Date | null>(new Date());
+  const [hour, setHour] = useState('2');
+  const [ampm, setAmpm] = useState('AM');
+  const [timezone, setTimezone] = useState('');
+  const [passcode, setPasscode] = useState('AHHC9Y');
+  const [waitingRoom, setWaitingRoom] = useState(false);
+  const [chatEnabled, setChatEnabled] = useState(true);
+  const [hostVideo, setHostVideo] = useState(true);
+  const [participantVideo, setParticipantVideo] = useState(true);
+  const [startDate, setStartDate] = useState('');
+  const [openDialog, setOpenDialog] = useState(false);
+  const [showDescriptionField, setShowDescriptionField] = useState(false);
+  const [description, setDescription] = useState('');
+  const [meetingDetails, setMeetingDetails] = useState(null);
+  const [topic, setTopic] = useState('My Meeting');
 
-interface Patient {
-  name?: string;
-  url?: string;
-  endTime?: Date;
-}
+  // console.log("startDate", startDate);
 
-interface Provider {
-  userName: string;
-  roomName: string;
-  url: string;
-}
+  const pathParts = window.location.pathname.split("/");
 
-// Static Global Context (Temporary Dummy Data)
-const global = {
-  isPatient: true,
-  providerObj: {
-    userName: "Dr. Smith",
-    roomName: "FewaTelemedicine",
-    url: "https://example.com/provider-room",
-  },
-  patientObj: {
-    name: "John Doe",
-    url: "https://example.com/patient-room",
-  },
-};
+  const patientId = pathParts[pathParts.length - 1];
 
-const NotificationService = {
-  EventCompletePatient: { subscribe: (callback: (patient: Patient) => void) => { } },
-  EventGetAllProviders: { subscribe: (callback: (providers: any) => void) => { } },
-  EventCallPatient: { subscribe: (callback: (patient: Patient) => void) => { } },
-  EventChatMessage: { subscribe: (callback: (chatData: any) => void) => { } },
-  LoadActiveDoctors: () => console.log("Loading active doctors..."),
-  Connect: () => console.log("Connecting..."),
-  CallEnds: (patient: Patient) => console.log("Call ended for", patient),
-  SendChatMessage: (message: any) => console.log("Chat message sent:", message),
-};
+  console.log('meetingDetails', meetingDetails);
 
-const VideoConference: React.FC = () => {
-  const [isMeetStart, setIsMeetStart] = useState<boolean>(false);
-  const [currentChat, setCurrentChat] = useState<any[]>([]);
-  const [chatMessage, setChatMessage] = useState<string>("");
-  const [patientObj, setPatientObj] = useState<Patient>(global.patientObj);
-  const [providerObj, setProviderObj] = useState<Provider>(global.providerObj);
-  const chatContainerRef = useRef<HTMLDivElement | null>(null);
-  const [zoomMeetingUrl, setZoomMeetingUrl] = useState<string | null>(null);
-
-
-  const roomName: string = providerObj.roomName;
-  const remoteUserDisplayName: string = patientObj.name;
-
-  useEffect(() => {
-    initVideoConference();
-  }, []);
-
-  const initVideoConference = () => {
-    if (global.isPatient) {
-      NotificationService.EventCompletePatient.subscribe((_patient: Patient) => {
-        setPatientObj(_patient);
-        patientCompleted(_patient);
-      });
-
-      NotificationService.EventGetAllProviders.subscribe((_providers: any) => { });
-
-      NotificationService.LoadActiveDoctors();
-    } else {
-      NotificationService.Connect();
-
-      NotificationService.EventCallPatient.subscribe((_patient: Patient) => {
-        setPatientObj(_patient);
-      });
-
-      NotificationService.EventChatMessage.subscribe((chatData: any) => {
-        setCurrentChat((prevChat) => [...prevChat, chatData]);
-        scrollToBottom();
-      });
-    }
-  };
-
-  // const startMeet = () => {
-  //   alert("Meeting started");
-  //   setIsMeetStart(true);
-  // };
-
-
-  const startMeet = async () => {
+  const scheduleMeeting = async () => {
     const token = localStorage.getItem("accessToken");
+
     try {
+      const [selectedHourStr, selectedMinuteStr] = hour.split(":");
+      let hourNum = parseInt(selectedHourStr);
+      const minuteNum = parseInt(selectedMinuteStr);
+
+      // Correctly handle AM/PM
+      if (ampm === "PM" && hourNum < 12) {
+        hourNum += 12;
+      }
+      if (ampm === "AM" && hourNum === 12) {
+        hourNum = 0;
+      }
+
+      const [year, month, day] = startDate.split("-").map(Number);
+
+      // Now create datetime in selected timezone
+      const meetingTime = DateTime.fromObject(
+        {
+          year: year,
+          month: month,
+          day: day,
+          hour: hourNum,
+          minute: minuteNum,
+        },
+        { zone: timezone }
+      );
+      // Convert it to UTC
+      const isoStartTime = meetingTime.toLocal().toString();
+
+      console.log("Final start_time (corrected):", isoStartTime);
+
+
       const response = await fetch("http://localhost:2000/api/v1/zoom/create-meeting", {
         method: "POST",
         headers: {
@@ -100,15 +89,19 @@ const VideoConference: React.FC = () => {
           Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
-          // topic: "Fewa Telemedicine Call",
-          // userRole: global.isPatient ? "patient" : "provider",
+          topic: topic,
+          description: description,
+          timezone: timezone,   // keep selected timezone
+          start_time: isoStartTime, // corrected start time
+          userId: Number(patientId),
         }),
       });
 
       const result = await response.json();
+      console.log("Zoom API Response:", result);
       if (result.success && result.data) {
-        setZoomMeetingUrl(result.data);
-        setIsMeetStart(true);
+        setMeetingDetails(result.data);
+        localStorage.setItem("meetingStarted", "true");
       } else {
         alert("Failed to create Zoom meeting.");
         console.error("Zoom API Error:", result.message);
@@ -118,123 +111,163 @@ const VideoConference: React.FC = () => {
       alert("An error occurred while starting the meeting.");
     }
   };
-  
-  // const patientCompleted = (patient: Patient) => {
-  //   if (!patient) return;
 
-  //   setIsMeetStart(false);
-  //   patient.url = providerObj.url;
-  //   patient.endTime = new Date();
-  //   global.patientObj = patient;
-  //   NotificationService.CallEnds(patient);
-  // };
-  // const handleJoinZoomMeeting = () => {
-  //   if (zoomMeetingUrl) {
-  //     window.open(zoomMeetingUrl, "_blank");
-  //   } else {
-  //     alert("No Zoom meeting URL available.");
-  //   }
-  // };
-  // const handleLeaveZoomMeeting = () => {
-  //   if (zoomMeetingUrl) {
-  //     window.close();
-  //   } else {
-  //     alert("No Zoom meeting URL available.");
-  //   }
-  // };  
-
-  const endMeet = () => {
-    if (!patientObj) return;
-
-    setIsMeetStart(false);
-    patientObj.url = providerObj.url;
-    patientObj.endTime = new Date();
-    global.patientObj = patientObj;
-    NotificationService.CallEnds(patientObj);
-    navigate("/provider/report");
-  };
-
-  const sendChatMsg = () => {
-    if (!chatMessage.trim()) return;
-
-    const sendingChatMsg = {
-      isProvider: true,
-      sender: providerObj.userName,
-      receiver: patientObj.name,
-      message: chatMessage,
-    };
-
-    setCurrentChat((prevChat) => [...prevChat, sendingChatMsg]);
-    NotificationService.SendChatMessage(sendingChatMsg);
-    scrollToBottom();
-    setChatMessage("");
-  };
-
-  const handleChatChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setChatMessage(event.target.value);
-  };
-
-  const handleChatKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === "Enter") {
-      sendChatMsg();
-    }
-  };
-
-  const scrollToBottom = () => {
-    if (chatContainerRef.current) {
-      chatContainerRef.current.scrollIntoView({ behavior: "smooth", block: "end" });
-    }
-  };
-  const agoraAppId = 'cd1f3f29ef86458a8fce0a2a3c5b192b';
 
   return (
     <MainLayout>
-      <Box sx={{ p: 3 }}>
-        <Typography variant="h4">Video Conference</Typography>
+      {!meetingDetails && <Box p={4} maxWidth={600} mx="auto">
+        <Typography variant="h5" gutterBottom>
+          Schedule Meeting
+        </Typography>
 
-        <Paper elevation={3} sx={{ p: 2, my: 2 }}>
-          <Typography variant="h6">Room: {roomName}</Typography>
-          <Typography variant="subtitle1">User: {remoteUserDisplayName}</Typography>
+        <TextField
+          label="Topic"
+          fullWidth
+          margin="normal"
+          value={topic}               // controlled input
+          onChange={(e) => setTopic(e.target.value)} // update state
+        />
 
-          {!isMeetStart ? (
-            <Button variant="contained" color="primary" onClick={startMeet} sx={{ mt: 2 }}>
-              Start Video Call
-            </Button>
-          ) : (
-            <Button variant="contained" color="error" onClick={endMeet} sx={{ mt: 2 }}>
-              End Meeting
-            </Button>
-          )}
-        </Paper>
-
-        {isMeetStart && (
-          <Box sx={{ width: "100%", height: "600px", mt: 2 }}>
-            {/* <Jitsi
-            roomName={roomName}
-            displayName={remoteUserDisplayName}
-            config={{
-              prejoinPageEnabled: false,
-              disableDeepLinking: true,
-            }}
-            onAPILoad={(JitsiMeetAPI) => console.log("Jitsi Meet API loaded")}
-          /> */}
-            {isMeetStart && zoomMeetingUrl && (
-              <Box sx={{ width: "100%", height: "600px", mt: 2 }}>
-                <iframe
-                  src={zoomMeetingUrl}
-                  allow="camera; microphone; fullscreen"
-                  style={{ width: "100%", height: "100%", border: "none" }}
-                  title="Zoom Meeting"
-                />
-              </Box>
-            )}
-
-
-          </Box>
+        {!showDescriptionField && <Button onClick={() => setShowDescriptionField(true)} sx={{ mt: 1 }}>
+          + Add Description
+        </Button>}
+        {showDescriptionField && (
+          <TextField
+            fullWidth
+            label="Description"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            multiline
+            rows={3}
+            sx={{ mt: 1 }}
+          />
         )}
-      </Box>
+        <Box mt={2}>
+          <TextField
+            label="Start Date"
+            type="date"
+            fullWidth
+            value={startDate}
+            onChange={(e) => setStartDate(e.target.value)}
+            InputLabelProps={{ shrink: true }}
+          />
+        </Box>
+        <Box mt={3}>
+          <Grid container spacing={2} alignItems="center">
+            <Grid item xs={6}>
+              <FormControl fullWidth>
+                <InputLabel>Time</InputLabel>
+                <Select
+                  value={hour}
+                  onChange={(e) => setHour(e.target.value)}
+                  label="Time"
+                >
+                  {time.map((t) => (
+                    <MenuItem key={t} value={t}>
+                      {t}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
+
+            <Grid item xs={6}>
+              <FormControl fullWidth>
+                {/* <InputLabel>AM/PM</InputLabel> */}
+                <Select value={ampm} onChange={(e) => setAmpm(e.target.value)}>
+                  <MenuItem value="AM">AM</MenuItem>
+                  <MenuItem value="PM">PM</MenuItem>
+                </Select>
+              </FormControl>
+            </Grid>
+          </Grid>
+        </Box>
+
+        <Grid item mt={3} xs={12}>
+          <FormControl fullWidth>
+            <InputLabel>Time Zone</InputLabel>
+            <Select
+              value={timezone}
+              onChange={(e) => setTimezone(e.target.value)}
+              label="Time Zone"
+            >
+              {Object.entries(timezones).map(([key, label]) => (
+                <MenuItem key={key} value={key}>
+                  {label}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        </Grid>
+        {/* <Box mt={2}>
+          <TextField
+            label="Attendees"
+            placeholder="Enter user names or email addresses"
+            fullWidth
+            margin="normal"
+          />
+        </Box>
+
+        <Typography variant="subtitle1" mt={4} mb={1}>
+          Meeting ID
+        </Typography>
+        <FormControlLabel control={<Checkbox defaultChecked />} label="Generate Automatically" />
+        <FormControlLabel control={<Checkbox />} label="Personal Meeting ID 702 737 4262" /> */}
+
+        <Box mt={4} display="flex" gap={2}>
+          <Button variant="contained" color="primary" onClick={scheduleMeeting}>
+            Save
+          </Button>
+          <Button variant="outlined" color="secondary">
+            Cancel
+          </Button>
+        </Box>
+      </Box>}
+
+
+      {meetingDetails && (
+        <Box mt={6} p={3} border="1px solid #ccc" borderRadius={2}>
+          <Typography variant="h4" gutterBottom>
+            Meeting Details
+          </Typography>
+          <Box mt={2}>
+            <Typography><strong>Topic:</strong> {meetingDetails.topic}</Typography>
+          </Box>
+          <Box mt={2}>
+            <Typography><strong>Description:</strong> {meetingDetails.agenda || 'N/A'}</Typography>
+          </Box>
+          {/* <Typography><strong>Time:</strong> {new Date(meetingDetails.start_time).toLocaleString('en-US', { timeZone: meetingDetails.timezone })}</Typography> */}
+          <Box mt={2}>
+            <Typography>
+              <strong>Time:</strong> {DateTime.fromISO(meetingDetails.start_time, { zone: 'utc' }).setZone(meetingDetails.timezone).toLocaleString(DateTime.DATETIME_MED)}
+            </Typography>
+          </Box>
+
+
+          <Box mt={2}>
+            <Typography><strong>Meeting ID:</strong> {meetingDetails.id}</Typography>
+          </Box>
+          <Box mt={2}>
+            <Typography><strong>Attendees:</strong> {meetingDetails.attendees || 'N/A'}</Typography>
+          </Box>
+          <Box mt={2}>
+            <Typography>
+              <strong>Invite Link:</strong>{" "}
+              <a href={meetingDetails.join_url} target="_blank" rel="noopener noreferrer">
+                {meetingDetails.join_url}
+              </a>
+            </Typography>
+          </Box>
+          <Box mt={4}>
+            <Button variant="contained" color="primary" href={meetingDetails.join_url} target="_blank">
+              Start
+            </Button>
+          </Box>
+        </Box>
+      )}
+
     </MainLayout>
   );
 };
 
-export default VideoConference;
+export default ScheduleMeeting;

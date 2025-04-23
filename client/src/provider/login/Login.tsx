@@ -12,8 +12,6 @@ import {
 import "./Login.scss";
 import { navigate } from "wouter/use-browser-location";
 import { toast } from 'sonner'
-// import { useNavigate } from "react-router-dom";
-// import Link from "wouter";
 
 const Login = () => {
   type FormState = {
@@ -28,11 +26,10 @@ const Login = () => {
 
   const API_BASE_URL = "http://localhost:2000/api/v1";
 
-  const [errors, setErrors] = useState({});
-  //   const navigate = useNavigate();
+  const [errors, setErrors] = useState<{ providerUserName?: string; providerPassword?: string; apiError?: string }>({});
 
   const validate = () => {
-    let tempErrors = {};
+    let tempErrors: { providerUserName?: string; providerPassword?: string; apiError?: string } = {};
     if (!form.providerUserName) tempErrors.providerUserName = "Username is required";
     if (!form.providerPassword) tempErrors.providerPassword = "Password is required";
     setErrors(tempErrors);
@@ -43,21 +40,10 @@ const Login = () => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  // const handleSubmit = (e) => {
-  //   e.preventDefault();
-  //   if (validate()) {
-  //     console.log("Logging in with:", form);
-  //     localStorage.setItem("userName", JSON.stringify(form.providerUserName))
-  //     navigate("/provider/dashboard");
-  //     // Implement login logic here
-  //   }
-  // };
-
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validate()) return;
-  
+
     try {
       const response = await fetch(`${API_BASE_URL}/auth/login`, {
         method: "POST",
@@ -69,39 +55,37 @@ const Login = () => {
           password: form.providerPassword,
         }),
       });
-  
+
       const result = await response.json();
-  
+
       if (!response.ok || !result.success) {
         throw new Error(result.message || "Login failed. Please try again.");
       }
-  
+
       const { role, accessToken, } = result.data;
       toast.success(result.message);
-       console.log("Login successful:", result);
-      // Store essentials
       localStorage.setItem("role", role);
       localStorage.setItem("accessToken", accessToken);
       localStorage.setItem("userName", JSON.stringify(form.providerUserName));
-  
+
       // Redirect based on role
       switch (role) {
-        case "ADMIN":
+        case "DOCTOR":
           navigate("/provider/dashboard");
           break;
         case "PATIENT":
-          navigate("/patient/intro");
+          navigate("/patient/home");
           break;
         default:
           throw new Error("Unauthorized role. Please contact support.");
       }
-  
+
     } catch (error) {
       toast.error(error.message);
       setErrors({ apiError: error.message });
     }
   };
-  
+
 
 
   return (
@@ -173,12 +157,12 @@ const Login = () => {
                     </Button>
                   </Grid>
                   <Grid item xs={12}>
-                  <Box textAlign="center">
-                  <Typography variant="body2" mt={2}>
-                    Don’t have an account?{" "}
-                    <Link href="/provider/register">Sign Up</Link>
-                  </Typography>
-                  </Box>
+                    <Box textAlign="center">
+                      <Typography variant="body2" mt={2}>
+                        Don’t have an account?{" "}
+                        <Link href="/provider/register">Sign Up</Link>
+                      </Typography>
+                    </Box>
                   </Grid>
                 </Grid>
               </form>

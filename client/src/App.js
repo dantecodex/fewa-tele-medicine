@@ -24,6 +24,8 @@ import LiveVideoChat from "./patient/liveVideoChat/LiveVideoChat.tsx";
 import Summary from "./patient/summary/Summary.tsx";
 import { Toaster } from 'sonner'
 import VideoMeeting from "./provider/videoConference/VideoMeeting.tsx";
+import DoctorProfile from "./provider/doctorProfile/DoctorProfile.tsx";
+import PatientDashboard from "./patient/patientHome/PatientHome.tsx";
 // import LiveVideoChat from "./patient/liveVideoChat/LiveVideoChat.tsx";
 
 // Create a client
@@ -57,7 +59,7 @@ function Router() {
       <Route path="/provider/chat">
         <IsAuthenticated>  <Chat /> </IsAuthenticated>
       </Route>
-      <Route path="/provider/video_conference/">
+      <Route path="/provider/video_conference/:patientId">
         <IsAuthenticated>   <VideoConference /> </IsAuthenticated>
         {/* <IsAuthenticated>   <VideoMeeting /> </IsAuthenticated> */}
       </Route>
@@ -73,10 +75,18 @@ function Router() {
       <Route path="/provider/admin_setting">
         <IsAuthenticated>  <AdminSettings /> </IsAuthenticated>
       </Route>
+      <Route path="/provider/doctor_profile">
+        <IsAuthenticated>  <DoctorProfile /> </IsAuthenticated>
+      </Route>
       <Route path="/provider/live_video">
         <IsAuthenticated>   <LiveChat /> </IsAuthenticated>
-       {/* //Patient route  */}
       </Route>
+
+
+       {/* //Patient route  */}   
+       <Route path="/patient/home">
+        <PatientDashboard />
+      </Route>  
       <Route path="/patient/intro">
         <PatientIntro />
       </Route>

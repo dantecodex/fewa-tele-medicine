@@ -81,7 +81,7 @@ const Summary: React.FC = () => {
     if (!email.trim()) return;
     setDisableButton(true);
     try {
-      const key = "73l3M3D"; // Hardcoded
+      const key = "73l3M3D";
       const updatedPatient = { ...patient, email: email.trim() };
       const response = await axios.post(
         `/Messenger/EmailPatientReport?key=${key}`,
@@ -125,10 +125,10 @@ const Summary: React.FC = () => {
             <Box mt={3}>
               <Typography variant="h6">Visit Summary</Typography>
 
-              {patient.advice?.length > 0 && (
+              {(patient.advice ?? []).length > 0 && (
                 <Box mt={2}>
                   <Typography>What we did today?</Typography>
-                  {patient.advice.map((adv, index) => (
+                  {(patient.advice ?? []).map((adv, index) => (
                     <FormControlLabel
                       key={index}
                       control={

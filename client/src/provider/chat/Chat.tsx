@@ -27,11 +27,26 @@ import MainLayout from "../../component/layout/MainLayout.tsx";
 const Chat = () => {
   const [anchorEl, setAnchorEl] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
-  const [currentChatUser, setCurrentChatUser] = useState(null);
+  interface ChatUser {
+    id: number;
+    name: string;
+    image: string;
+  }
+  
+  const [currentChatUser, setCurrentChatUser] = useState<ChatUser | null>(null);
   const [messages, setMessages] = useState({});
   const [newMessage, setNewMessage] = useState("");
   const [selectedFile, setSelectedFile] = useState(null);
-  const chatContainerRef = useRef(null);
+  const chatContainerRef = useRef<HTMLDivElement | null>(null);
+  interface Patient {
+    id: number;
+    first: string;
+    image: string;
+  }
+
+  const [patients, setPatients] = useState<Patient[]>([]);
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   // Mock data for users
   const users = [
@@ -71,7 +86,7 @@ const Chat = () => {
     if (newMessage.trim() !== "" && currentChatUser) {
       const updatedMessages = {
         ...messages,
-        [currentChatUser.name]: [
+        [currentChatUser?.name || ""]: [
           ...(messages[currentChatUser.name] || []),
           { sender: "Me", message: newMessage, time: new Date().toLocaleTimeString() },
         ],
@@ -102,8 +117,8 @@ const Chat = () => {
     reader.onload = () => {
       setMessages((prev) => ({
         ...prev,
-        [currentChatUser.name]: [
-          ...(prev[currentChatUser.name] || []),
+        [currentChatUser?.name || ""]: [
+          ...(currentChatUser ? prev[currentChatUser.name] || [] : []),
           {
             sender: "Me",
             file: reader.result,
@@ -123,6 +138,46 @@ const Chat = () => {
       alert("No user selected for calling.");
     }
   };
+
+  const getPatientList = async () => {
+    const token = localStorage.getItem('accessToken');
+    try {
+      const response = await fetch("http://localhost:2000/api/v1/patient/list", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
+        },
+      });
+  
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+  
+      const data = await response.json();
+      console.log("Fetched patients API", data);
+      return data;
+    } catch (error) {
+      console.error("Error fetching patient list:", error);
+      throw error;
+    }
+  };
+
+  useEffect(() => {
+    const fetchPatients = async () => {
+      try {
+        const response = await getPatientList();
+        console.log("API Response:", response);
+        setPatients(response.data); // <-- set the array inside "data"
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+  
+    fetchPatients();
+  }, []);
   
 
   return (
@@ -151,8 +206,8 @@ const Chat = () => {
 
           {/* Chat List */}
           <List>
-            {users
-              .filter((user) => user.name.toLowerCase().includes(searchTerm.toLowerCase()))
+            {patients
+              .filter((user) => user.first.toLowerCase().includes(searchTerm.toLowerCase()))
               .map((user) => (
                 <ListItem
                   key={user.id}
@@ -161,7 +216,7 @@ const Chat = () => {
                   onClick={() => handleUserSelect(user)}
                 >
                   <Avatar src={user.image || "/assets/img/profilePic.jpg"} />
-                  <ListItemText primary={user.name} sx={{ marginLeft: 2 }} />
+                  <ListItemText primary={user.first} sx={{ marginLeft: 2 }} />
                 </ListItem>
               ))}
           </List>

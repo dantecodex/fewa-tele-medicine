@@ -192,7 +192,7 @@ const UserSettings: React.FC = () => {
         {/* Tabs */}
         <Tabs value={tabValue} onChange={handleTabChange} variant="fullWidth">
           <Tab label="Update Profile" />
-          <Tab label="Update Advice" />
+          {/* <Tab label="Update Advice" /> */}
         </Tabs>
 
         {/* Profile Form */}
@@ -428,11 +428,10 @@ const UserSettings: React.FC = () => {
         )}
 
         {/* Advice Form */}
-        {tabValue === 1 && (
+        {/* {tabValue === 1 && (
           <Box sx={{ marginTop: 2 }}>
             <form onSubmit={handleAdviceSubmit(onSubmitAdvice)}>
               <Grid container spacing={2}>
-                {/* Diagnosis */}
                 <Grid item xs={12}>
                   <Controller
                     name="diagnosis"
@@ -449,8 +448,6 @@ const UserSettings: React.FC = () => {
                     )}
                   />
                 </Grid>
-
-                {/* Treatment */}
                 <Grid item xs={12}>
                   <Controller
                     name="treatment"
@@ -468,7 +465,6 @@ const UserSettings: React.FC = () => {
                   />
                 </Grid>
 
-                {/* Additional Notes */}
                 <Grid item xs={12}>
                   <Controller
                     name="notes"
@@ -479,7 +475,6 @@ const UserSettings: React.FC = () => {
                   />
                 </Grid>
 
-                {/* Submit Button */}
                 <Grid item xs={12} textAlign="right">
                   <Button onClick={() => resetAdvice()} variant="outlined" sx={{ marginRight: 2 }}>
                     Cancel
@@ -491,7 +486,7 @@ const UserSettings: React.FC = () => {
               </Grid>
             </form>
           </Box>
-        )}
+        )} */}
       </Paper>
     </MainLayout>
   );

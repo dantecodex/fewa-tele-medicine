@@ -9,6 +9,8 @@ import zoomController from "../controller/zoom.controller.js"
 import authorizeRole from "../middleware/authorization.middleware.js"
 import doctorController from "../controller/doctor.controller.js"
 import patientController from "../controller/patient.controller.js"
+import doctorRouter from "./doctor.router.js"
+import patientRouter from "./patient.router.js"
 
 const apiRouter = express.Router()
 
@@ -18,23 +20,12 @@ apiRouter.use(checkAuth) // Middleware to check if the user exist or not
 
 apiRouter.route("/user/profile").put(Upload().single("avatar"), userController.updateProfile)
 
+apiRouter.use("/doctor", doctorRouter)
+
+apiRouter.use("/patient", patientRouter)
+
 apiRouter
   .route("/zoom/create-meeting")
   .post(authorizeRole("DOCTOR"), zoomController.createZoomMeeting)
-
-apiRouter
-  .route("/doctor/time-slot")
-  .post(authorizeRole("DOCTOR"), doctorController.setDoctorAvailability)
-apiRouter
-  .route("/doctor/meeting")
-  .get(authorizeRole("DOCTOR"), doctorController.upcomingMeetingList)
-apiRouter
-  .route("/doctor/meeting/:status")
-  .patch(authorizeRole("DOCTOR"), doctorController.updateMeetingStatus)
-
-apiRouter.route("/patient/list").get(authorizeRole("DOCTOR"), patientController.patientList)
-apiRouter
-  .route("/patient/meeting")
-  .get(authorizeRole("PATIENT"), patientController.upcomingMeetingList)
 
 export default apiRouter

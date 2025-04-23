@@ -17,7 +17,16 @@ const upcomingMeetingList = asyncErrorHandler(async (req, res) => {
 
 })
 
+const updateMeetingStatus = asyncErrorHandler(async (req, res) => {
+  const validatedData = doctorValidation.updateMeetingStatus.validate({ ...req.body, ...req.params })
+
+  await doctorService.updateMeetingStatus(validatedData, req.user.id)
+  res.status(200).json(apiResponseHandler(`Meeting status has been updated to ${validatedData.status}`, { status: validatedData.status }))
+})
+
 export default {
   setDoctorAvailability,
-  upcomingMeetingList
+  upcomingMeetingList,
+  upcomingMeetingList,
+  updateMeetingStatus
 }

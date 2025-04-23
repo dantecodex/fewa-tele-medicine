@@ -77,6 +77,55 @@ async function main() {
     data: usersList
   })
 
+  const meetingList = [
+    {
+      meeting_id: '96549027346',
+      topic: 'Test Meeting',
+      agenda: null,
+      join_url: 'https://zoom.us/j/96549027346?pwd=YfnjslFav5IzacNVakERtgp23wKYDZ.1',
+      password: 'aP1Sqe',
+      start_time: new Date('2025-04-23T07:29:17Z'),
+      duration: 60,
+      timezone: 'UTC',
+      status: 'PENDING',
+      created_at: new Date('2025-04-23T07:29:17Z'),
+      patient_id: 6,
+      doctor_id: 1,
+    },
+    {
+      meeting_id: '42359065432',
+      topic: 'Diabetes Consultation',
+      agenda: 'Discuss lifestyle management',
+      join_url: 'https://zoom.us/j/42359065432?pwd=Zxc123Fghj098',
+      password: 'dx4L7e',
+      start_time: new Date('2025-04-25T09:00:00Z'),
+      duration: 45,
+      timezone: 'UTC',
+      status: 'PENDING',
+      created_at: new Date('2025-04-22T10:00:00Z'),
+      patient_id: 6,
+      doctor_id: 1,
+    },
+    {
+      meeting_id: '76439018276',
+      topic: 'Post-Surgery Checkup',
+      agenda: 'Review recovery progress',
+      join_url: 'https://zoom.us/j/76439018276?pwd=Abc456Def789',
+      password: 'ms6ZoP',
+      start_time: new Date('2025-04-28T11:30:00Z'),
+      duration: 30,
+      timezone: 'UTC',
+      status: 'PENDING',
+      created_at: new Date('2025-04-23T12:00:00Z'),
+      patient_id: 6,
+      doctor_id: 1,
+    }
+  ]
+
+  await prisma.meeting.createMany({
+    data: meetingList
+  })
+
   console.log("🌱 Seed completed")
 }
 

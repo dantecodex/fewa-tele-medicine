@@ -15,6 +15,12 @@ const setDoctorAvailability = new ValidationHelper(
         .min(1)
 )
 
+const updateMeetingStatus = new ValidationHelper({
+    meetingId: Joi.string().trim().required(),
+    status: Joi.string().uppercase().valid('COMPLETED', 'PENDING', 'CANCELLED').required()
+})
+
 export default {
     setDoctorAvailability,
+    updateMeetingStatus
 }

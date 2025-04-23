@@ -35,7 +35,18 @@ const upcomingMeetingList = async (doctorId) => {
   return list
 }
 
+const updateMeetingStatus = async (validatedData, doctorId) => {
+  await prisma.meeting.update({
+    where: {
+      doctor_id: doctorId,
+      meeting_id: validatedData.meetingId
+    },
+    data: { status: validatedData.status }
+  })
+}
+
 export default {
   setDoctorAvailability,
-  upcomingMeetingList
+  upcomingMeetingList,
+  updateMeetingStatus
 }

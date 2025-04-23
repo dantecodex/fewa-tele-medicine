@@ -50,7 +50,7 @@ model Timeslot {
 
 model Meeting {
   id         Int           @id @default(autoincrement())
-  meeting_id String
+  meeting_id String        @unique
   topic      String
   agenda     String?
   join_url   String

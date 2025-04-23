@@ -5,7 +5,6 @@ import prisma from "../../prisma/client/prismaClient.js"
 import logger from "../utils/logger.js"
 import emailQueue from "../jobs/queues/email.queue.js"
 
-
 const __dirname = import.meta.dirname
 import fs from "fs/promises"
 import path from "path"
@@ -42,10 +41,9 @@ const getZoomAccessToken = async () => {
 }
 
 const createZoomMeeting = async (validatedData, doctorData) => {
-
   const userData = await prisma.user.findFirst({
     where: { id: validatedData.userId },
-    select: { email: true }
+    select: { email: true },
   })
 
   if (!userData) {
@@ -58,9 +56,9 @@ const createZoomMeeting = async (validatedData, doctorData) => {
   const userId = "me"
   const url = `https://api.zoom.us/v2/users/${userId}/meetings`
 
-  const timezonePath = path.join(__dirname + './../constants/timezone.constant.json')
+  const timezonePath = path.join(__dirname + "./../constants/timezone.constant.json")
 
-  const jsonString = await fs.readFile(timezonePath, 'utf8')
+  const jsonString = await fs.readFile(timezonePath, "utf8")
   const timezoneList = JSON.parse(jsonString)
 
   if (!Object.hasOwn(timezoneList, validatedData.timezone)) {
@@ -107,11 +105,11 @@ const createZoomMeeting = async (validatedData, doctorData) => {
       timezone: meetingData.timezone,
       created_at: meetingData.created_at,
       patient_id: validatedData.userId,
-      doctor_id: doctorData.id
-    }
+      doctor_id: doctorData.id,
+    },
   })
 
-  await emailQueue.add('sendEmail', {
+  await emailQueue.add("sendEmail", {
     email: userData.email,
     subject: "Zoom meeting Scheduled",
     message: `Your zoom meeting with Dr. ${doctorData.name}, Your meeting link: ${meetingData.join_url}`,

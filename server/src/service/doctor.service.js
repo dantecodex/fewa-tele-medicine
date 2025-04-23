@@ -19,7 +19,7 @@ const setDoctorAvailability = async (validatedData, doctorId) => {
 const upcomingMeetingList = async (doctorId) => {
   const list = await prisma.meeting.findMany({
     where: {
-      doctor_id: doctorId
+      doctor_id: doctorId,
     },
     include: {
       patient: {
@@ -27,10 +27,10 @@ const upcomingMeetingList = async (doctorId) => {
           first: true,
           last: true,
           email: true,
-          phone: true
-        }
-      }
-    }
+          phone: true,
+        },
+      },
+    },
   })
   return list
 }
@@ -39,14 +39,14 @@ const updateMeetingStatus = async (validatedData, doctorId) => {
   await prisma.meeting.update({
     where: {
       doctor_id: doctorId,
-      meeting_id: validatedData.meetingId
+      meeting_id: validatedData.meetingId,
     },
-    data: { status: validatedData.status }
+    data: { status: validatedData.status },
   })
 }
 
 export default {
   setDoctorAvailability,
   upcomingMeetingList,
-  updateMeetingStatus
+  updateMeetingStatus,
 }

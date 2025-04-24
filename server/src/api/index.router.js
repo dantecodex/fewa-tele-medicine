@@ -7,10 +7,9 @@ import authRouter from "./auth.router.js"
 import Upload from "../middleware/multer.middleware.js"
 import zoomController from "../controller/zoom.controller.js"
 import authorizeRole from "../middleware/authorization.middleware.js"
-import doctorController from "../controller/doctor.controller.js"
-import patientController from "../controller/patient.controller.js"
 import doctorRouter from "./doctor.router.js"
 import patientRouter from "./patient.router.js"
+import chatRouter from "./chat.router.js"
 
 const apiRouter = express.Router()
 
@@ -23,6 +22,8 @@ apiRouter.route("/user/profile").put(Upload().single("avatar"), userController.u
 apiRouter.use("/doctor", doctorRouter)
 
 apiRouter.use("/patient", patientRouter)
+
+apiRouter.use("/chat", chatRouter)
 
 apiRouter
   .route("/zoom/create-meeting")

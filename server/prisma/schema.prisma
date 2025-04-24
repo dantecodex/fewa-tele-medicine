@@ -31,8 +31,12 @@ model User {
   password_reset_otp_expires_at DateTime?
   role                          Role
   Timeslot                      Timeslot[]
-  Patient_Meeting               Meeting[]  @relation("patient")
-  Doctor_Meeting                Meeting[]  @relation("doctor")
+
+  Patient_Meeting Meeting[] @relation("patient")
+  Doctor_Meeting  Meeting[] @relation("doctor")
+
+  messages         Message[] @relation("senderMessages")
+  receivedMessages Message[] @relation("receiverMessages")
 }
 
 model Timeslot {
@@ -67,6 +71,21 @@ model Meeting {
 
   doctor    User @relation("doctor", fields: [doctor_id], references: [id])
   doctor_id Int
+}
+
+model Message {
+  id          Int      @id @default(autoincrement())
+  sender_Id   Int
+  receiver_Id Int
+  text        String
+  room_id     String
+  created_at  DateTime @default(now())
+
+  sender   User @relation("senderMessages", fields: [sender_Id], references: [id])
+  receiver User @relation("receiverMessages", fields: [receiver_Id], references: [id])
+  // @@index([sender_Id, receiver_Id, created_at], name: "message_index")
+
+  @@index([room_id, created_at], name: "by_room_and_time")
 }
 
 enum Role {

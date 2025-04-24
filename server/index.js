@@ -5,16 +5,19 @@ import compression from "compression"
 import httpErrors from "http-errors"
 import "dotenv/config"
 import morgan from "morgan"
+import http from "http"
 
 import logger from "./src/utils/logger.js"
 import apiRouter from "./src/api/index.router.js"
 import globalErrorHandler from "./src/utils/globalErrorHandler.js"
 import requestId from "./src/middleware/requestId.middleware.js"
 import rateLimiter from "./src/utils/rateLimiter.js"
+import initSocket from "./src/socket/socket.js"
 
 // Starting workers
 import "./src/jobs/index.worker.js"
 
+// Validate required env vars
 const requiredEnvVars = [
   "NODE_ENV",
   "CORS_ORIGINS",
@@ -53,9 +56,7 @@ app.use(
 app.use(rateLimiter(1000, "1h"))
 app.use(morgan("dev"))
 app.use(requestId)
-
 app.use(compression())
-
 app.use(express.json({ limit: "10kb" }))
 app.use(express.urlencoded({ extended: true }))
 app.use(express.static("public"))
@@ -95,14 +96,19 @@ app.use("*", (req, res, next) => {
 app.use(globalErrorHandler)
 
 const PORT = process.env.PORT || 2000
-const server = app.listen(PORT, () => {
+const httpServer = http.createServer(app)
+
+initSocket(httpServer, corsOptions)
+
+httpServer.listen(PORT, () => {
   logger.info(`Server running in ${process.env.NODE_ENV} mode on port ${PORT}`)
   console.log(`Server running in ${process.env.NODE_ENV} mode on port ${PORT}`)
 })
 
+// Graceful shutdown
 const shutdown = (signal) => {
   logger.info(`${signal} received: Closing HTTP server`)
-  server.close(() => {
+  httpServer.close(() => {
     logger.info("HTTP server closed")
     process.exit(0)
   })

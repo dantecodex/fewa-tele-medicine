@@ -24,7 +24,7 @@
 //   // Dropdown handlers
 //   const handleMenuOpen = (event) => setAnchorEl(event.currentTarget);
 //   const handleMenuClose = () => setAnchorEl(null);
-  
+
 //   // Date change handlers
 //   const handleStartDateChange = (event) => setStartDate(event.target.value);
 //   const handleEndDateChange = (event) => setEndDate(event.target.value);
@@ -151,22 +151,45 @@
 // export default MeetingHistory;
 
 import React, { useEffect, useState } from 'react';
-import { Container, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, CircularProgress, Chip } from '@mui/material';
+import { Container, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, TablePagination,CircularProgress, Chip } from '@mui/material';
+// import TablePagination from '@mui/material/TablePagination';
 import MainLayout from '../../component/layout/MainLayout.tsx';
 
 const MeetingHistory = () => {
-  const [meetings, setMeetings] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-    const renderStatusChip = (status) => {
-      if (status === 'COMPLETED') {
-        return <Chip label="Completed" color="success" size="small" />;
-      } else if (status === 'PENDING') {
-        return <Chip label="Pending" color="warning" size="small" />;
-      } else {
-        return <Chip label={status} size="small" />;
-      }
+  interface Meeting {
+    id: string;
+    meeting_id: string;
+    topic: string;
+    patient: {
+      first: string;
+      last: string;
+      email: string;
+      phone: string;
     };
+    status: string;
+  }
+
+  const [meetings, setMeetings] = useState<Meeting[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+  
+  // Slice meetings for current page
+  const paginatedMeetings = meetings.slice(
+    page * rowsPerPage,
+    page * rowsPerPage + rowsPerPage
+  );
+
+
+  const renderStatusChip = (status) => {
+    if (status === 'COMPLETED') {
+      return <Chip label="Completed" color="success" size="small" />;
+    } else if (status === 'PENDING') {
+      return <Chip label="Pending" color="warning" size="small" />;
+    } else {
+      return <Chip label={status} size="small" />;
+    }
+  };
 
   useEffect(() => {
     const fetchDoctorMeetings = async () => {
@@ -200,14 +223,15 @@ const MeetingHistory = () => {
 
   return (
     <MainLayout>
-    <Container maxWidth="lg" sx={{ mt: 4 }}>
-      <Typography variant="h4" gutterBottom>
-        Doctor Meeting History 📋
-      </Typography>
+       <Container maxWidth="lg" sx={{ mt: 4 }}>
+    <Typography variant="h4" gutterBottom>
+      Doctor Meeting History 📋
+    </Typography>
 
-      {loading ? (
-        <CircularProgress />
-      ) : (
+    {loading ? (
+      <CircularProgress />
+    ) : (
+      <>
         <TableContainer component={Paper} sx={{ mt: 4 }}>
           <Table>
             <TableHead>
@@ -221,7 +245,7 @@ const MeetingHistory = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {meetings.map((meeting) => (
+              {paginatedMeetings.map((meeting) => (
                 <TableRow key={meeting.id}>
                   <TableCell>{meeting.meeting_id}</TableCell>
                   <TableCell>{meeting.topic}</TableCell>
@@ -234,8 +258,23 @@ const MeetingHistory = () => {
             </TableBody>
           </Table>
         </TableContainer>
-      )}
-    </Container>
+
+        {/* Pagination Controls */}
+        <TablePagination
+          component="div"
+          count={meetings.length}
+          page={page}
+          onPageChange={(event, newPage) => setPage(newPage)}
+          rowsPerPage={rowsPerPage}
+          onRowsPerPageChange={(event) => {
+            setRowsPerPage(parseInt(event.target.value, 10));
+            setPage(0);
+          }}
+          rowsPerPageOptions={[10, 25, 50]}
+        />
+      </>
+    )}
+  </Container>
     </MainLayout>
   );
 };

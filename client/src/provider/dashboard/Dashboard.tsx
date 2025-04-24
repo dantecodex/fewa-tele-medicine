@@ -18,6 +18,7 @@ import {
   Select,
 } from "@mui/material";
 import { navigate } from "wouter/use-browser-location";
+import TablePagination from '@mui/material/TablePagination';
 import MainLayout from "../../component/layout/MainLayout.tsx";
 import "./Dashboard.scss";
 
@@ -41,6 +42,13 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true);
   const [meetings, setMeetings] = useState<Meeting[]>([]);
   const [savingStatusMeetingId, setSavingStatusMeetingId] = useState(null);
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
+
+  const paginatedMeetings = meetings.slice(
+    page * rowsPerPage,
+    page * rowsPerPage + rowsPerPage
+  );
 
   const fetchDoctorMeetings = async () => {
     try {
@@ -158,6 +166,8 @@ const Dashboard = () => {
       return <Chip label="Completed" color="success" size="small" />;
     } else if (status === 'PENDING') {
       return <Chip label="Pending" color="warning" size="small" />;
+    } else if (status === 'CANCELLED') {
+      return <Chip label="CANCELLED" color="error" size="small" />;
     } else {
       return <Chip label={status} size="small" />;
     }
@@ -224,60 +234,74 @@ const Dashboard = () => {
               <Grid container justifyContent="space-between" alignItems="center">
                 <Typography variant="h6"> All Appointments</Typography>
               </Grid>
+
               {loading ? (
                 <CircularProgress />
               ) : (
-                <TableContainer component={Paper} sx={{ mt: 4 }}>
-                  <Table>
-                    <TableHead>
-                      <TableRow>
-                        <TableCell><b>Meeting ID</b></TableCell>
-                        <TableCell><b>Topic</b></TableCell>
-                        <TableCell><b>Patient Name</b></TableCell>
-                        <TableCell><b>Patient Email</b></TableCell>
-                        <TableCell><b>Patient Phone</b></TableCell>
-                        <TableCell><b>Status</b></TableCell>
-                      </TableRow>
-                    </TableHead>
-                    <TableBody>
-                      {meetings.map((meeting) => (
-                        <TableRow key={meeting.id}>
-                          <TableCell>{meeting.meeting_id}</TableCell>
-                          <TableCell>{meeting.topic}</TableCell>
-                          <TableCell>{meeting.patient.first} {meeting.patient.last}</TableCell>
-                          <TableCell>{meeting.patient.email}</TableCell>
-                          <TableCell>{meeting.patient.phone}</TableCell>
-                          <TableCell>
-                            {savingStatusMeetingId === meeting.id ? (
-                              <CircularProgress size={24} />
-                            ) : (
-                              <Select
-                                value={meeting.status}
-                                onChange={(e) => handleStatusChange(e.target.value, meeting.meeting_id,)}
-                                size="small"
-                                sx={{ minWidth: 120 }}
-                                renderValue={(selected) => renderStatusChip(selected)}
-                              >
-                                <MenuItem value="PENDING">
-                                  <Chip label="Pending" color="warning" size="small" />
-                                </MenuItem>
-                                <MenuItem value="COMPLETED">
-                                  <Chip label="Completed" color="success" size="small" />
-                                </MenuItem>
-                                <MenuItem value="CANCELLED">
-                                  <Chip label="Cancelled" color="error" size="small" />
-                                </MenuItem>
-                              </Select>
-
-                            )}
-                          </TableCell>
-
+                <>
+                  <TableContainer component={Paper} sx={{ mt: 4 }}>
+                    <Table>
+                      <TableHead>
+                        <TableRow>
+                          <TableCell><b>Meeting ID</b></TableCell>
+                          <TableCell><b>Topic</b></TableCell>
+                          <TableCell><b>Patient Name</b></TableCell>
+                          <TableCell><b>Patient Email</b></TableCell>
+                          <TableCell><b>Patient Phone</b></TableCell>
+                          <TableCell><b>Status</b></TableCell>
                         </TableRow>
-                      ))}
-                    </TableBody>
+                      </TableHead>
+                      <TableBody>
+                        {paginatedMeetings.map((meeting) => (
+                          <TableRow key={meeting.id}>
+                            <TableCell>{meeting.meeting_id}</TableCell>
+                            <TableCell>{meeting.topic}</TableCell>
+                            <TableCell>{meeting.patient.first} {meeting.patient.last}</TableCell>
+                            <TableCell>{meeting.patient.email}</TableCell>
+                            <TableCell>{meeting.patient.phone}</TableCell>
+                            <TableCell>
+                              {savingStatusMeetingId === meeting.id ? (
+                                <CircularProgress size={24} />
+                              ) : (
+                                <Select
+                                  value={meeting.status}
+                                  onChange={(e) => handleStatusChange(e.target.value, meeting.meeting_id)}
+                                  size="small"
+                                  sx={{ minWidth: 120 }}
+                                  renderValue={(selected) => renderStatusChip(selected)}
+                                >
+                                  <MenuItem value="PENDING">
+                                    <Chip label="Pending" color="warning" size="small" />
+                                  </MenuItem>
+                                  <MenuItem value="COMPLETED">
+                                    <Chip label="Completed" color="success" size="small" />
+                                  </MenuItem>
+                                  <MenuItem value="CANCELLED">
+                                    <Chip label="Cancelled" color="error" size="small" />
+                                  </MenuItem>
+                                </Select>
+                              )}
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </TableContainer>
 
-                  </Table>
-                </TableContainer>
+                  {/* Pagination */}
+                  <TablePagination
+                    component="div"
+                    count={meetings.length}
+                    page={page}
+                    onPageChange={(event, newPage) => setPage(newPage)}
+                    rowsPerPage={rowsPerPage}
+                    onRowsPerPageChange={(e) => {
+                      setRowsPerPage(parseInt(e.target.value, 10));
+                      setPage(0);
+                    }}
+                    rowsPerPageOptions={[5, 10, 25]}
+                  />
+                </>
               )}
             </CardContent>
           </Card>

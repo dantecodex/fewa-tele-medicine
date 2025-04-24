@@ -223,9 +223,9 @@ const DoctorProfile: React.FC = () => {
                     <Typography><b>Residence Country</b></Typography><Typography>{userInfo.residenceCountry || '-'}</Typography>
                     <Typography><b>Specialization</b></Typography><Typography>{userInfo.specialization || '-'}</Typography>
                     <Typography><b>Languages</b></Typography><Typography>{userInfo.languages.join(', ')}</Typography>
-                    <Typography><b>30 Minutes Price</b></Typography><Typography>{userInfo.price30 || '-'}</Typography>
-                    <Typography><b>60 Minutes Price</b></Typography><Typography>{userInfo.price60 || '-'}</Typography>
-                    <Box sx={{ mt: 1 }}>
+                    {/* <Typography><b>30 Minutes Price</b></Typography><Typography>{userInfo.price30 || '-'}</Typography>
+                    <Typography><b>60 Minutes Price</b></Typography><Typography>{userInfo.price60 || '-'}</Typography> */}
+                    <Box sx={{ mt: 12 }}>
                       <Link component="button" underline="none" sx={{ color: 'green', fontWeight: 'bold' }} onClick={handleEditProfile}>
                         <EditIcon fontSize="small" sx={{ mr: 0.5 }} />Edit Profile
                       </Link>
@@ -351,16 +351,19 @@ const DoctorProfile: React.FC = () => {
                               </TableRow>
                             </TableHead>
                             <TableBody>
-                              {meetings.map((meeting) => (
-                                <TableRow key={meeting.id}>
-                                  <TableCell>{meeting.meeting_id}</TableCell>
-                                  <TableCell>{meeting.topic}</TableCell>
-                                  <TableCell>{meeting.patient.first} {meeting.patient.last}</TableCell>
-                                  <TableCell>{meeting.patient.email}</TableCell>
-                                  <TableCell>{meeting.patient.phone}</TableCell>
-                                  <TableCell>{renderStatusChip(meeting.status)}</TableCell>
-                                </TableRow>
-                              ))}
+                              {meetings
+                                .filter((meeting) => meeting.status === 'PENDING')
+                                .map((meeting) => (
+                                  <TableRow key={meeting.id}>
+                                    <TableCell>{meeting.meeting_id}</TableCell>
+                                    <TableCell>{meeting.topic}</TableCell>
+                                    <TableCell>{meeting.patient.first} {meeting.patient.last}</TableCell>
+                                    <TableCell>{meeting.patient.email}</TableCell>
+                                    <TableCell>{meeting.patient.phone}</TableCell>
+                                    <TableCell>{renderStatusChip(meeting.status)}</TableCell>
+                                  </TableRow>
+                                ))}
+
                             </TableBody>
                           </Table>
                         </TableContainer>

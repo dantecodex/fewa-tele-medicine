@@ -36,14 +36,21 @@ export function Navbar() {
   };
 
   const userDisplayName = () => {
-    if (userRole === "DOCTOR") {
-      return providerObj.nameTitle + " " + (providerUserName ? JSON.parse(providerUserName) : "");
-    } else if (userRole === "PATIENT") {
-      return providerUserName ? JSON.parse(providerUserName) : "";
+    const role = userRole?.toLowerCase();
+    const name = providerUserName
+      ? providerUserName.replace(/^"|"$/g, "") // strip surrounding quotes
+      : "";
+  
+    if (role === "doctor") {
+      return `${providerObj?.nameTitle || "Dr."} ${name}`;
+    } else if (role === "patient") {
+      return name;
     } else {
       return "";
     }
-  }
+  };
+  
+  
 
   return (
     <AppBar color="default" sx={{ borderBottom: 1, borderColor: "divider" }}>

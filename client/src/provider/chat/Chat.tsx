@@ -20,6 +20,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import CallIcon from "@mui/icons-material/Call";
 import SendIcon from "@mui/icons-material/Send";
+import { io } from "socket.io-client";
 import "./Chat.scss";
 import MainLayout from "../../component/layout/MainLayout.tsx";
 
@@ -47,6 +48,7 @@ const Chat = () => {
   const [patients, setPatients] = useState<Patient[]>([]);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
+  const socket = io("http://localhost:2000");
 
   // Mock data for users
   const users = [
@@ -75,26 +77,88 @@ const Chat = () => {
   };
 
   const handleUserSelect = (user) => {
-    setCurrentChatUser(user);
-    setMessages((prev) => ({
-      ...prev,
-      [user.name]: prev[user.name] || [],
-    }));
+    const normalizedUser = {
+      ...user,
+      name: user.name || user.first,
+    };
+    setCurrentChatUser(normalizedUser);
+  
+    // Join a unique room (e.g. based on user IDs)
+    const roomId = `room-${normalizedUser.id}`;
+    socket.emit("join_room", roomId);
   };
+  
+
+  // const handleUserSelect = (user) => {
+  //   const normalizedUser = {
+  //     ...user,
+  //     name: user.name || user.first, // fallback to 'first' if 'name' is undefined
+  //   };
+  //   setCurrentChatUser(normalizedUser);
+  //   setMessages((prev) => ({
+  //     ...prev,
+  //     [normalizedUser.name]: prev[normalizedUser.name] || [],
+  //   }));
+  // };
+  
 
   const handleSendMessage = () => {
     if (newMessage.trim() !== "" && currentChatUser) {
-      const updatedMessages = {
-        ...messages,
-        [currentChatUser?.name || ""]: [
-          ...(messages[currentChatUser.name] || []),
-          { sender: "Me", message: newMessage, time: new Date().toLocaleTimeString() },
-        ],
+      const roomId = `room-${currentChatUser.id}`;
+      // "sendID:REcieverID"
+      const messageData = {
+        room: roomId,
+        sender: "Me",
+        message: newMessage,
+        time: new Date().toLocaleTimeString(),
       };
-      setMessages(updatedMessages);
+  
+      socket.emit("send_message", messageData); // send via socket
+  
+      setMessages((prev) => ({
+        ...prev,
+        [currentChatUser.name]: [...(prev[currentChatUser.name] || []), messageData],
+      }));
+  
       setNewMessage("");
     }
   };
+  
+
+  // const handleSendMessage = () => {
+  //   if (newMessage.trim() !== "" && currentChatUser) {
+  //     const userKey = currentChatUser.name;
+  //     console.log("Sending message to:", userKey);
+  
+  //     const updatedMessages = {
+  //       ...messages,
+  //       [userKey]: [
+  //         ...(messages[userKey] || []),
+  //         { sender: "Me", message: newMessage, time: new Date().toLocaleTimeString() },
+  //       ],
+  //     };
+  //     setMessages(updatedMessages);
+  //     setNewMessage("");
+  //   }
+  // };
+  
+
+  useEffect(() => {
+    socket.on("receive_message", (data) => {
+      setMessages((prev) => ({
+        ...prev,
+        [currentChatUser?.name || ""]: [
+          ...(prev[currentChatUser?.name ?? ""] || []),
+          data,
+        ],
+      }));
+    });
+  
+    return () => {
+      socket.off("receive_message");
+    };
+  }, [currentChatUser]);
+  
 
   const handleFileChange = (event) => {
     const file = event.target.files[0];
@@ -168,7 +232,13 @@ const Chat = () => {
       try {
         const response = await getPatientList();
         console.log("API Response:", response);
-        setPatients(response.data); // <-- set the array inside "data"
+        // setPatients(response.data);
+        setPatients(
+          response.data.map((p) => ({
+            ...p,
+            name: `${p.first} ${p.last || ""}`.trim(),
+          }))
+        );
       } catch (err) {
         setError(err.message);
       } finally {
@@ -233,7 +303,7 @@ const Chat = () => {
                   {currentChatUser.name}
                 </Typography>
                 <IconButton>
-                  <CallIcon onClick={handleCallUser}/>
+                  {/* <CallIcon onClick={handleCallUser}/> */}
                 </IconButton>
               </Box>
 

@@ -36,7 +36,18 @@ const ScheduleMeeting = () => {
   const [openDialog, setOpenDialog] = useState(false);
   const [showDescriptionField, setShowDescriptionField] = useState(false);
   const [description, setDescription] = useState('');
-  const [meetingDetails, setMeetingDetails] = useState(null);
+  interface MeetingDetails {
+    topic: string;
+    agenda?: string;
+    start_time: string;
+    timezone: string;
+    id: string | number;
+    attendees?: string;
+    join_url: string;
+    year: string
+  }
+
+  const [meetingDetails, setMeetingDetails] = useState<MeetingDetails | null>(null);
   const [topic, setTopic] = useState('My Meeting');
 
   // console.log("startDate", startDate);
@@ -77,7 +88,7 @@ const ScheduleMeeting = () => {
         { zone: timezone }
       );
       // Convert it to UTC
-      const isoStartTime = meetingTime.toLocal().toString();
+      const isoStartTime = meetingTime?.toString()?.replace(/\.\d{3}[+-]\d{2}:\d{2}$/, "");
 
       console.log("Final start_time (corrected):", isoStartTime);
 
@@ -112,6 +123,25 @@ const ScheduleMeeting = () => {
     }
   };
 
+const formateDate = (isoString: string,timeZone) => {
+  if (!isoString) {
+    return "N/A"
+  }
+
+  const date: Date = new Date(isoString);
+
+  const formattedDate: string = date.toLocaleString("en-US", {
+    month: "short",       
+    day: "numeric",       
+    year: "numeric",      
+    hour: "numeric",      
+    minute: "2-digit",    
+    hour12: true,
+    timeZone       
+  });
+
+  return formattedDate?.replace(/,(?=[^,]*$)/, "");
+};
 
   return (
     <MainLayout>
@@ -239,7 +269,7 @@ const ScheduleMeeting = () => {
           {/* <Typography><strong>Time:</strong> {new Date(meetingDetails.start_time).toLocaleString('en-US', { timeZone: meetingDetails.timezone })}</Typography> */}
           <Box mt={2}>
             <Typography>
-              <strong>Time:</strong> {DateTime.fromISO(meetingDetails.start_time, { zone: 'utc' }).setZone(meetingDetails.timezone).toLocaleString(DateTime.DATETIME_MED)}
+              <strong>Time:</strong> {`${meetingDetails?.start_time} (${meetingDetails?.timezone})`}
             </Typography>
           </Box>
 

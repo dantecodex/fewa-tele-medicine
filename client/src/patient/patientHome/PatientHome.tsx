@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Container, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Link, CircularProgress } from '@mui/material';
+import { Container, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Link, CircularProgress, Grid2, Grid, Card, CardContent } from '@mui/material';
 import MainLayout from '../../component/layout/MainLayout.tsx';
 
 const PatientDashboard = () => {
@@ -18,6 +18,7 @@ const PatientDashboard = () => {
 
   const [meetings, setMeetings] = useState<Meeting[]>([]);
   const [loading, setLoading] = useState(true);
+  const providerUserName = localStorage.getItem("userName");
 
   useEffect(() => {
     const fetchMeetings = async () => {
@@ -50,12 +51,29 @@ const PatientDashboard = () => {
     fetchMeetings();
   }, []);
 
+  const userDisplayName = () => {
+    const name = providerUserName
+      ? providerUserName.replace(/^"|"$/g, "") // strip surrounding quotes
+      : "";
+      return name;
+  };
+
   return (
     <MainLayout>
       <Container maxWidth="lg" sx={{ mt: 4 }}>
-        <Typography variant="h4" gutterBottom>
-          Hello Patient 👋
-        </Typography>
+        {/* <Typography variant="h4" gutterBottom>
+          Hello {userDisplayName()} 👋 */}
+          <Grid item xs={14} md={10}>
+                    <Card>
+                      <CardContent>
+                        <Grid container alignItems="center">
+                          <img src="/assets/img/dashboard.png" alt="Dashboard" style={{ width: 100, marginRight: 20 }} />
+                          <Typography variant="h5">Hello! {JSON.parse(providerUserName || '""')}</Typography>
+                        </Grid>
+                      </CardContent>
+                    </Card>
+                  </Grid>
+        {/* </Typography> */}
 
         {loading ? (
           <CircularProgress />

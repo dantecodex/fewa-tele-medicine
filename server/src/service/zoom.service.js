@@ -33,6 +33,8 @@ const getZoomAccessToken = async () => {
     )
   }
 
+  // console.log("validatedData start time", validatedData.start_time)
+  // console.log(String(validatedData.start_time))
   const data = await response.json()
   const accessToken = data.access_token
 
@@ -45,7 +47,6 @@ const createZoomMeeting = async (validatedData, doctorData) => {
     where: { id: validatedData.userId },
     select: { email: true },
   })
-  console.log("Validated Data", validatedData.start_time)
 
   if (!userData) {
     logger.info("Invalid patient ID provided when creating a zoom meeting")
@@ -96,8 +97,6 @@ const createZoomMeeting = async (validatedData, doctorData) => {
   // console.log("meetingData", meetingData.start_time)
   // console.log("timezone", meetingData.timezone)
   // console.log(meetingData.start_time.toLocaleString("en-IN", { timeZone: validatedData.timezone }))
-  // console.log(validatedData.start_time))
-  // console.log(String(validatedData.start_time))
 
   const meeting = await prisma.meeting.create({
     data: {
@@ -106,7 +105,7 @@ const createZoomMeeting = async (validatedData, doctorData) => {
       agenda: meetingData.description ?? null,
       join_url: meetingData.join_url,
       password: meetingData.password,
-      start_time: validatedData.start_time,
+      start_time: String(validatedData.start_time),
       duration: meetingData.duration,
       timezone: meetingData.timezone,
       created_at: meetingData.created_at,

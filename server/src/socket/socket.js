@@ -9,7 +9,8 @@ const initSocket = (server, corsOptions) => {
 
   io.use(async (socket, next) => {
     try {
-      const tokenHeader = socket.handshake.auth?.token
+      const tokenHeader = socket.handshake.headers?.auth
+
       if (!tokenHeader?.startsWith("Bearer ")) {
         return next(new Error("Authentication required"))
       }

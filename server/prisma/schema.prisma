@@ -55,7 +55,7 @@ model Meeting {
   agenda     String?
   join_url   String
   password   String
-  start_time DateTime
+  start_time String
   duration   Int
   timezone   String
   status     MeetingStatus @default(PENDING)

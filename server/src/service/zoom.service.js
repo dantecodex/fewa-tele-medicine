@@ -106,7 +106,7 @@ const createZoomMeeting = async (validatedData, doctorData) => {
       agenda: meetingData.description ?? null,
       join_url: meetingData.join_url,
       password: meetingData.password,
-      start_time: String(validatedData.start_time),
+      start_time: validatedData.start_time,
       duration: meetingData.duration,
       timezone: meetingData.timezone,
       created_at: meetingData.created_at,

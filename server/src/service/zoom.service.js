@@ -95,7 +95,7 @@ const createZoomMeeting = async (
       doctor_id: doctorData.id,
     },
   })
-
+  await redis.del(`meetingHistory:${doctorData.id}`)
   // Queue email notification
   await emailQueue.add("sendEmail", {
     email: user.email,

@@ -1,8 +1,8 @@
+import { DateTime } from "luxon"
 import prisma from "../../prisma/client/prismaClient.js"
+import redis from "../utils/redis.js"
 
 const setDoctorAvailability = async (validatedData, doctorId) => {
-  // console.log("validatedData", validatedData);
-
   const dataToInsert = validatedData.map((data) => {
     return {
       doctor_id: doctorId,
@@ -17,6 +17,14 @@ const setDoctorAvailability = async (validatedData, doctorId) => {
 }
 
 const upcomingMeetingList = async (doctorId) => {
+  const redisKey = `meetingHistory:${doctorId}`
+
+  const meetingHistory = await redis.get(redisKey)
+  if (meetingHistory) {
+    const parsed = JSON.parse(meetingHistory)
+    if (parsed.length > 0) return parsed
+  }
+
   const list = await prisma.meeting.findMany({
     where: {
       doctor_id: doctorId,
@@ -32,7 +40,16 @@ const upcomingMeetingList = async (doctorId) => {
       },
     },
   })
-  return list
+  const formatedList = list.map((data) => {
+    return {
+      ...data,
+      start_time: DateTime.fromISO(data.start_time, { zone: "utc" })
+        .setZone(data.timezone)
+        .toFormat("MMM dd, yyyy, hh:mm a"),
+    }
+  })
+  await redis.set(`meetingHistory:${doctorId}`, JSON.stringify(formatedList))
+  return formatedList
 }
 
 const updateMeetingStatus = async (validatedData, doctorId) => {

@@ -57,7 +57,8 @@ const Login = () => {
       });
 
       const result = await response.json();
-
+      localStorage.setItem("loginData", JSON.stringify(result?.data));
+  console.log("result login",result);
       if (!response.ok || !result.success) {
         throw new Error(result.message || "Login failed. Please try again.");
       }
@@ -100,7 +101,7 @@ const Login = () => {
             <Box className="intro-formSec" textAlign="center">
               <Typography variant="h4">We Are</Typography>
               <Typography variant="h4" fontWeight="bold">
-                Fewa Telemedicine
+                Dasion Smart Telemedicine
               </Typography>
               <Box className="loginIntro" mt={2}>
                 <Typography variant="h6">Welcome back,</Typography>
@@ -178,8 +179,8 @@ const Login = () => {
             </Box>
             <Box className="intro-bannercontent" mt={2}>
               <Typography>
-                Welcome to the demo of Fewa. This is the place where you can put your practice
-                description. Fewa is an application that helps connect providers and patients via
+                Welcome to the demo of Dasion Smart. This is the place where you can put your practice
+                description. Dasion Smart is an application that helps connect providers and patients via
                 video.
               </Typography>
               <ul>

@@ -323,8 +323,8 @@ const ForgotPassword = () => {
             </Box>
             <Box className="intro-bannercontent" mt={2}>
               <Typography>
-                Welcome to the demo of Fewa. This is the place where you can put your practice
-                description. Fewa is an application that helps connect providers and patients via
+                Welcome to the demo of Dasion Smart. This is the place where you can put your practice
+                description. Dasion Smart is an application that helps connect providers and patients via
                 video.
               </Typography>
               <ul>

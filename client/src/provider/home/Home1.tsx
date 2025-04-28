@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Container, Grid, Typography, Button, TextField, Paper } from "@mui/material";
+import { Container, Grid, Typography, Button, TextField, Paper, Box } from "@mui/material";
 import { Link } from "wouter";
 import  './Home.scss';
 import AboutUs from "./AboutUs.tsx";
@@ -15,7 +15,20 @@ const Home = () => {
         <Container>
           <Grid container justifyContent="space-between" alignItems="center">
             <Grid item xs={12} md={4}>
-              <Typography variant="h4">Fewa Telemedicine</Typography>
+              <Typography
+                variant="h6"
+                component={Link}
+                href="/"
+                sx={{
+                  textDecoration: "none",
+                  color: "inherit",
+                  display: "flex",
+                  alignItems: "center"
+                }}
+              >
+                <Box component="img" src="/assets/img/dasionlogo.png" alt="dasion" sx={{ width: 40, height: 40, mr: 1 }} />
+                Dasion Smart Telemedicine
+              </Typography>
             </Grid>
             <Grid item xs={12} md={8}>
               <nav>
@@ -141,9 +154,9 @@ const Home = () => {
         <Container>
           <Grid container spacing={3}>
             <Grid item xs={12} md={4}>
-              <Typography variant="h5">About FEWA</Typography>
+              <Typography variant="h5">About Dasion</Typography>
               <Typography>
-                Fewa Telemedicine is a product of Imark USA LLC, designed by medical professionals for optimized patient-provider interaction.
+                Dasion Smart Telemedicine is a product of Imark USA LLC, designed by medical professionals for optimized patient-provider interaction.
               </Typography>
             </Grid>
             <Grid item xs={12} md={2}>
@@ -164,7 +177,7 @@ const Home = () => {
             </Grid>
             <Grid item xs={12} md={4}>
               <Typography variant="h5">Contact Us</Typography>
-              <Typography>Email: fewatele@gmail.com</Typography>
+              <Typography>Email: Dasion Smarttele@gmail.com</Typography>
               <Typography>Address: 302 Paoli Woods Paoli, PA 19301 USA.</Typography>
             </Grid>
           </Grid>

@@ -29,7 +29,7 @@ const Login: React.FC = () => {
       <Box sx={{ textAlign: "center", mt: 5 }}>
         {/* <Image src="/assets/img/stethoscope.png" alt="Logo" width={80} height={80} /> */}
         <Typography variant="h4" sx={{ mt: 2 }}>We Are</Typography>
-        <Typography variant="h3" color="primary">Fewa Telemedicine</Typography>
+        <Typography variant="h3" color="primary">Dasion Telemedicine</Typography>
 
         <Box sx={{ mt: 4 }}>
           <Typography variant="h6">Welcome back,</Typography>

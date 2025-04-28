@@ -120,9 +120,9 @@ export default function Home() {
         <Container>
           <Grid container spacing={3}>
             <Grid item xs={12} md={4}>
-              <Typography variant="h5">About FEWA</Typography>
+              <Typography variant="h5">About Dasion Smart</Typography>
               <Typography>
-                Fewa Telemedicine is a product of Imark USA LLC, designed by medical professionals for optimized patient-provider interaction.
+                Dasion Smart Telemedicine is a product of Imark USA LLC, designed by medical professionals for optimized patient-provider interaction.
               </Typography>
             </Grid>
             <Grid item xs={12} md={2}>
@@ -143,7 +143,7 @@ export default function Home() {
             </Grid>
             <Grid item xs={12} md={4}>
               <Typography variant="h5">Contact Us</Typography>
-              <Typography>Email: fewatele@gmail.com</Typography>
+              <Typography>Email: Dasion Smarttele@gmail.com</Typography>
               <Typography>Address: 302 Paoli Woods Paoli, PA 19301 USA.</Typography>
             </Grid>
           </Grid>

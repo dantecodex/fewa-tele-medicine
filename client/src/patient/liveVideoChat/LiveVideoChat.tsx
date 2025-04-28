@@ -82,7 +82,7 @@ const LiveVideoChat = () => {
         <Paper sx={{ width: "100%", height: "100%", display: "flex", justifyContent: "center", alignItems: "center" }}>
           {isMeetStart ? (
             <iframe
-              src="https://meet.jit.si/FewaTelemedicine"
+              src="https://meet.jit.si/Dasion SmartTelemedicine"
               allow="camera; microphone; fullscreen; display-capture"
               style={{ width: "100%", height: "100%", border: "none" }}
               frameBorder="0"

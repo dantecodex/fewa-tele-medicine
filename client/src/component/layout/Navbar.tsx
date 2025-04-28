@@ -40,7 +40,7 @@ export function Navbar() {
     const name = providerUserName
       ? providerUserName.replace(/^"|"$/g, "") // strip surrounding quotes
       : "";
-  
+
     if (role === "doctor") {
       return `${providerObj?.nameTitle || "Dr."} ${name}`;
     } else if (role === "patient") {
@@ -49,16 +49,28 @@ export function Navbar() {
       return "";
     }
   };
-  
-  
+
+
 
   return (
     <AppBar color="default" sx={{ borderBottom: 1, borderColor: "divider" }}>
       <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
         {/* App Name / Logo */}
-        <Typography variant="h6" component={Link} href="/" sx={{ textDecoration: "none", color: "inherit" }}>
-          Fewa Telemedicine
+        <Typography
+          variant="h6"
+          component={Link}
+          href="/"
+          sx={{
+            textDecoration: "none",
+            color: "inherit",
+            display: "flex",
+            alignItems: "center"
+          }}
+        >
+          <Box component="img" src="/assets/img/dasionlogo.png" alt="dasion" sx={{ width: 40, height: 40, mr: 1 }} />
+          Dasion Smart Telemedicine
         </Typography>
+
 
         {/* Auth Buttons */}
         <Box sx={{ display: "flex", gap: 2 }}>

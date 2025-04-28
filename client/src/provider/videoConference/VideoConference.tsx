@@ -44,7 +44,8 @@ const ScheduleMeeting = () => {
     id: string | number;
     attendees?: string;
     join_url: string;
-    year: string
+    year: string;
+    password: string;
   }
 
   const [meetingDetails, setMeetingDetails] = useState<MeetingDetails | null>(null);
@@ -276,6 +277,9 @@ const formateDate = (isoString: string,timeZone) => {
 
           <Box mt={2}>
             <Typography><strong>Meeting ID:</strong> {meetingDetails.id}</Typography>
+          </Box>
+          <Box mt={2}>
+            <Typography><strong>Meeting Code:</strong> {meetingDetails.password}</Typography>
           </Box>
           <Box mt={2}>
             <Typography><strong>Attendees:</strong> {meetingDetails.attendees || 'N/A'}</Typography>

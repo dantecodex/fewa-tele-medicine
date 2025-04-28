@@ -84,7 +84,8 @@ const Registration = () => {
         });
         const result = await response.json();
         if (result.success) {
-          localStorage.setItem("regData", JSON.stringify(data));
+          // localStorage.setItem("regData", JSON.stringify(data));
+          localStorage.getItem("regData");
           setEmail(data.email);
           setToken(result.token);
           // setMessage("OTP has been sent to your email.");
@@ -321,7 +322,7 @@ const Registration = () => {
               <img src="/assets/img/logo.png" alt="Practice Logo" className="img-fluid" />
             </Box>
             <Box className="intro-bannercontent" mt={2}>
-              <Typography>Welcome to the demo of Fewa. This is the place where you can put your practice description.</Typography>
+              <Typography>Welcome to the demo of Dasion Smart. This is the place where you can put your practice description.</Typography>
               <ul>
                 <li>
                   <span>📞</span>

@@ -146,8 +146,8 @@ const UserSettings: React.FC = () => {
     formData.append("username", data.userName);
     formData.append("email", data.email);
     formData.append("phone", data.phone);
-    formData.append("designation", data.designation);
-    formData.append("degree", data.medicalDegree);
+      // formData.append("designation", data.designation);
+      // formData.append("degree", data.medicalDegree);
     formData.append("password", data.newPassword);
     if (selectedFile) {
       formData.append("avatar", selectedFile);
@@ -320,7 +320,7 @@ const UserSettings: React.FC = () => {
                 </Grid>
 
                 {/* Designation */}
-                <Grid item xs={12} md={6}>
+                {/* <Grid item xs={12} md={6}>
                   <Controller
                     name="designation"
                     control={profileControl}
@@ -335,10 +335,10 @@ const UserSettings: React.FC = () => {
                       />
                     )}
                   />
-                </Grid>
+                </Grid> */}
 
                 {/* Medical Degree */}
-                <Grid item xs={12} md={6}>
+                {/* <Grid item xs={12} md={6}>
                   <Controller
                     name="medicalDegree"
                     control={profileControl}
@@ -353,18 +353,9 @@ const UserSettings: React.FC = () => {
                       />
                     )}
                   />
-                </Grid>
+                </Grid> */}
 
                 {/* Profile Image */}
-                {/* <Grid item xs={12} md={6}>
-                <input
-                  type="file"
-                  accept=".png,.jpg,.jpeg"
-                  onChange={handleFileChange}
-                  style={{ marginBottom: 8 }}
-                />
-                {selectedFile && <Typography>{selectedFile.name}</Typography>}
-              </Grid> */}
                 <Grid item xs={12} md={6}>
                   <input
                     type="file"
